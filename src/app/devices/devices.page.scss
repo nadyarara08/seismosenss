@@ -1,0 +1,121 @@
+// Welcome section
+.welcome-text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+  margin-bottom: 5px;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+// Content section
+.content-section {
+  margin-top: 20px;
+}
+
+// Device cards
+.device-card {
+  margin-bottom: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid var(--ion-color-medium);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  // Status-based border colors
+  &.online {
+    border-left-color: var(--ion-color-success);
+  }
+
+  &.warning {
+    border-left-color: var(--ion-color-warning);
+  }
+
+  &.offline {
+    border-left-color: var(--ion-color-danger);
+  }
+
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.device-info {
+  flex: 1;
+
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ion-color-medium);
+  }
+}
+
+.device-status {
+  flex-shrink: 0;
+  margin-left: 15px;
+
+  ion-badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .device-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .device-status {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+  }
+}
+
+// Animation for card interactions
+.device-card.activated {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}

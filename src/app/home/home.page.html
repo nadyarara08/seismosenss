@@ -1,20 +1,27 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>SeismoSens</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <div class="welcome-text">
+    <div class="welcome-title">Halo, John! 👋</div>
+    <div class="welcome-subtitle">Sistem monitoring berjalan optimal</div>
+  </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="alert-banner">
+    <div class="alert-title">⚠ Perhatian</div>
+    <div class="alert-text">SMS-USER-003 offline sejak 2 jam lalu</div>
+  </div>
+
+  <div class="device-card" (click)="showNotifications()">
+    <div class="device-header">
+      <div class="device-info">
+        <h3>SMS-USER-001</h3>
+        <p>Rumah Tinggal • Surakarta</p>
+      </div>
+      <div class="device-status online">● Online</div>
+    </div>
   </div>
 </ion-content>
