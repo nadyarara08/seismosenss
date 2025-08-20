@@ -1,8 +1,19 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
+import { 
+  IonContent, 
+  IonHeader, 
+  IonTitle, 
+  IonToolbar, 
+  IonFab, 
+  IonFabButton, 
+  IonIcon,
+  IonButton,
+  IonCard,
+  IonCardContent 
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add, remove, locate } from 'ionicons/icons';
+import { add, remove, locate, checkmarkCircle, warning, closeCircle } from 'ionicons/icons';
 import * as L from 'leaflet';
 
 interface SensorLocation {
@@ -32,16 +43,28 @@ interface FilterType {
 
 @Component({
   selector: 'app-map',
-  standalone: true,
-  imports: [CommonModule, IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, IonIcon],
   templateUrl: './map.page.html',
-  styleUrls: ['./map.page.scss']
+  styleUrls: ['./map.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    IonContent, 
+    IonHeader, 
+    IonTitle, 
+    IonToolbar, 
+    IonFab, 
+    IonFabButton, 
+    IonIcon,
+    IonButton,
+    IonCard,
+    IonCardContent
+  ]
 })
 export class MapPage implements AfterViewInit, OnDestroy {
 
   map!: L.Map;
   markers: L.Marker[] = [];
-  allMarkers: L.Marker[] = []; // Store all markers for filtering
+  allMarkers: L.Marker[] = [];
   currentFilter: string = 'all';
 
   // Filter options
@@ -61,7 +84,7 @@ export class MapPage implements AfterViewInit, OnDestroy {
     { color: '#3b82f6', label: 'Perangkat Anda', count: 3 }
   ];
 
-  // Sensor locations (sample data for Surakarta)
+  // Sensor locations for Surakarta
   sensorLocations: SensorLocation[] = [
     // User devices
     {
@@ -145,11 +168,21 @@ export class MapPage implements AfterViewInit, OnDestroy {
   ];
 
   constructor() {
-    addIcons({ add, remove, locate });
+    addIcons({ 
+      add, 
+      remove, 
+      locate, 
+      checkmarkCircle, 
+      warning, 
+      closeCircle 
+    });
   }
 
   ngAfterViewInit() {
-    this.initializeMap();
+    // Delay to ensure DOM is ready
+    setTimeout(() => {
+      this.initializeMap();
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -159,68 +192,76 @@ export class MapPage implements AfterViewInit, OnDestroy {
   }
 
   initializeMap() {
-    // Initialize map centered on Surakarta
-    this.map = L.map('map', {
-      zoomControl: false // Remove default zoom controls
-    }).setView([-7.5755, 110.8243], 13);
+    try {
+      // Initialize map centered on Surakarta
+      this.map = L.map('map', {
+        center: [-7.5755, 110.8243],
+        zoom: 13,
+        zoomControl: false // Remove default zoom controls
+      });
 
-    // Add tile layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 18
-    }).addTo(this.map);
+      // Add tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18
+      }).addTo(this.map);
 
-    // Add markers for all sensor locations
-    this.addSensorMarkers();
+      // Add markers
+      this.addSensorMarkers();
+      
+      console.log('Map initialized successfully');
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   }
 
   addSensorMarkers() {
     this.sensorLocations.forEach(sensor => {
       const marker = this.createMarker(sensor);
-      marker.addTo(this.map);
-      this.markers.push(marker);
-      this.allMarkers.push(marker);
+      if (marker) {
+        marker.addTo(this.map);
+        this.markers.push(marker);
+        this.allMarkers.push(marker);
+      }
     });
   }
 
-  createMarker(sensor: SensorLocation): L.Marker {
-    // Create custom icon based on status
-    const iconHtml = this.getMarkerIcon(sensor.status);
-    const customIcon = L.divIcon({
-      html: iconHtml,
-      className: 'custom-marker',
-      iconSize: [20, 20],
-      iconAnchor: [10, 10]
-    });
+  createMarker(sensor: SensorLocation): L.Marker | null {
+    try {
+      // Create custom icon
+      const iconHtml = this.getMarkerIcon(sensor.status);
+      const customIcon = L.divIcon({
+        html: iconHtml,
+        className: 'custom-marker',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
 
-    // Create marker
-    const marker = L.marker([sensor.lat, sensor.lng], { icon: customIcon });
+      // Create marker
+      const marker = L.marker([sensor.lat, sensor.lng], { 
+        icon: customIcon 
+      });
 
-    // Add popup
-    const popupContent = `
-      <div class="sensor-popup">
-        <h4>${sensor.name}</h4>
-        <p>${sensor.description}</p>
-        <div class="status-badge ${sensor.status}">
-          ${this.getStatusText(sensor.status)}
-        </div>
-      </div>
-    `;
-    
-    marker.bindPopup(popupContent);
+      // Add popup
+      const popupContent = this.getPopupContent(sensor);
+      marker.bindPopup(popupContent);
 
-    return marker;
+      return marker;
+    } catch (error) {
+      console.error('Error creating marker:', error);
+      return null;
+    }
   }
 
   getMarkerIcon(status: string): string {
-    const colors = {
+    const colors: { [key: string]: string } = {
       normal: '#10b981',
       warning: '#f59e0b',
       offline: '#ef4444',
       user: '#3b82f6'
     };
 
-    const color = colors[status as keyof typeof colors] || '#6b7280';
+    const color = colors[status] || '#6b7280';
     
     return `
       <div style="
@@ -234,14 +275,26 @@ export class MapPage implements AfterViewInit, OnDestroy {
     `;
   }
 
-  getStatusText(status: string): string {
-    const statusMap = {
-      normal: '● Normal',
-      warning: '⚠ Warning',
-      offline: '● Offline',
-      user: '📱 Perangkat Anda'
-    };
-    return statusMap[status as keyof typeof statusMap] || '● Unknown';
+  getPopupContent(sensor: SensorLocation): string {
+    return `
+      <div class="sensor-popup">
+        <h4>${sensor.name}</h4>
+        <p>${sensor.description}</p>
+        <div class="status-badge ${sensor.status}">
+          ${this.getStatusText(sensor)}
+        </div>
+      </div>
+    `;
+  }
+
+  getStatusText(sensor: SensorLocation): string {
+    switch (sensor.status) {
+      case 'normal': return '● Normal';
+      case 'warning': return '⚠ Warning';
+      case 'offline': return '● Offline';
+      case 'user': return '📱 Perangkat Anda';
+      default: return '● Unknown';
+    }
   }
 
   // Map control methods
@@ -263,85 +316,93 @@ export class MapPage implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Get total sensor count
-  getTotalSensors(): number {
-    return this.legendItems.reduce((total, item) => total + item.count, 0);
-  }
-
   // Filter functionality
   filterMarkers(filterType: string) {
     this.currentFilter = filterType;
     
-    // Update filter button states
+    // Update filter states
     this.filterOptions.forEach(option => {
       option.active = option.id === filterType;
     });
 
-    // Remove all markers from map
+    // Remove all markers
     this.markers.forEach(marker => {
-      this.map.removeLayer(marker);
+      if (this.map) {
+        this.map.removeLayer(marker);
+      }
     });
 
-    // Add filtered markers back
+    // Add filtered markers
     if (filterType === 'all') {
       this.allMarkers.forEach(marker => {
-        marker.addTo(this.map);
+        if (marker && this.map) {
+          marker.addTo(this.map);
+        }
       });
     } else {
       this.allMarkers.forEach((marker, index) => {
         const sensor = this.sensorLocations[index];
-        if (sensor.status === filterType) {
+        if (sensor?.status === filterType && marker && this.map) {
           marker.addTo(this.map);
         }
       });
     }
   }
 
-  // Location detail methods
+  // Location methods
   showLocationDetail(locationName: string) {
     const location = this.sensorLocations.find(loc => loc.name === locationName);
-    if (location) {
-      let statusIcon = '';
-      let healthInfo = '';
-      
-      switch (location.status) {
-        case 'normal':
-          statusIcon = '✅';
-          break;
-        case 'warning':
-          statusIcon = '⚠️';
-          healthInfo = '\n• Perlu pemeliharaan berkala';
-          break;
-        case 'offline':
-          statusIcon = '❌';
-          healthInfo = '\n• Periksa koneksi jaringan';
-          break;
-        case 'user':
-          statusIcon = '📱';
-          healthInfo = location.health ? `\n• Health: ${location.health}%` : '\n• Status: Offline';
-          break;
-      }
-      
-      alert(`${statusIcon} ${location.name}\n\n📍 ${location.category}\n${location.address}${location.distance ? `\n🚗 ${location.distance} dari lokasi Anda` : ''}${healthInfo}`);
-    }
+    if (!location) return;
+    
+    let statusIcon = this.getLocationIcon(location.status);
+    let healthInfo = this.getLocationHealthInfo(location);
+    
+    const message = `${statusIcon} ${location.name}\n\n📍 ${location.category}\n${location.address}${location.distance ? `\n🚗 ${location.distance} dari lokasi Anda` : ''}${healthInfo}`;
+    alert(message);
   }
 
   showDeviceDetail(deviceId: string) {
     const device = this.sensorLocations.find(d => d.id === deviceId);
-    if (device && device.status === 'user') {
-      let statusText = device.health && device.health > 0 ? 
-        `✅ ${device.name} berfungsi normal` : 
-        `❌ ${device.name} tidak terhubung`;
-      
-      let details = device.health && device.health > 0 ? 
-        `• Health: ${device.health}%\n• Status: Online\n• Last Update: Aktif sekarang` :
-        `• Status: Offline\n• Last Seen: 2 jam lalu\n• Periksa koneksi internet`;
-      
-      alert(`${statusText}\n\n📍 ${device.category}\n${device.address}\n\n${details}`);
+    if (!device || device.status !== 'user') return;
+    
+    let statusText = device.health && device.health > 0 ? 
+      `✅ ${device.name} berfungsi normal` : 
+      `❌ ${device.name} tidak terhubung`;
+    
+    let details = device.health && device.health > 0 ? 
+      `• Health: ${device.health}%\n• Status: Online\n• Last Update: Aktif sekarang` :
+      `• Status: Offline\n• Last Seen: 2 jam lalu\n• Periksa koneksi internet`;
+    
+    const message = `${statusText}\n\n📍 ${device.category}\n${device.address}\n\n${details}`;
+    alert(message);
+  }
+
+  private getLocationIcon(status: string): string {
+    const icons: { [key: string]: string } = {
+      'normal': '✅',
+      'warning': '⚠️',
+      'offline': '❌',
+      'user': '📱'
+    };
+    return icons[status] || '❓';
+  }
+
+  private getLocationHealthInfo(location: SensorLocation): string {
+    switch (location.status) {
+      case 'normal':
+        return '';
+      case 'warning':
+        return '\n• Perlu pemeliharaan berkala';
+      case 'offline':
+        return '\n• Periksa koneksi jaringan';
+      case 'user':
+        return location.health ? `\n• Health: ${location.health}%` : '\n• Status: Offline';
+      default:
+        return '';
     }
   }
 
-  // Stats data
+  // Stats methods
   getTotalActive(): number {
     return 1187;
   }
@@ -350,13 +411,27 @@ export class MapPage implements AfterViewInit, OnDestroy {
     return '97.4%';
   }
 
-  // Get public locations (not user devices)
+  getTotalSensors(): number {
+    return this.legendItems.reduce((total, item) => total + item.count, 0);
+  }
+
+  // Get locations by type
   getPublicLocations(): SensorLocation[] {
     return this.sensorLocations.filter(location => location.status !== 'user');
   }
 
-  // Get user devices
   getUserDevices(): SensorLocation[] {
     return this.sensorLocations.filter(location => location.status === 'user');
+  }
+
+  // Get status color for Ionic components
+  getStatusColor(status: string): string {
+    const colorMap: { [key: string]: string } = {
+      'normal': 'success',
+      'warning': 'warning',
+      'offline': 'danger',
+      'user': 'primary'
+    };
+    return colorMap[status] || 'medium';
   }
 }

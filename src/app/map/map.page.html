@@ -1,12 +1,13 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar color="primary">
     <ion-title>Smart City Map</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
+  
   <!-- Welcome Header -->
-  <div class="header">
+  <div class="header-section">
     <div class="welcome-text">
       <div class="welcome-title">Smart City Map 🗺</div>
       <div class="welcome-subtitle">Monitoring kota Surakarta (Solo)</div>
@@ -36,7 +37,8 @@
     <div class="map-controls">
       <ion-fab-button 
         size="small" 
-        class="map-btn"
+        color="light"
+        class="map-control-btn"
         (click)="zoomIn()"
       >
         <ion-icon name="add"></ion-icon>
@@ -44,7 +46,8 @@
       
       <ion-fab-button 
         size="small" 
-        class="map-btn"
+        color="light"
+        class="map-control-btn"
         (click)="zoomOut()"
       >
         <ion-icon name="remove"></ion-icon>
@@ -52,7 +55,8 @@
       
       <ion-fab-button 
         size="small" 
-        class="map-btn"
+        color="light"
+        class="map-control-btn"
         (click)="centerMap()"
       >
         <ion-icon name="locate"></ion-icon>
@@ -61,19 +65,23 @@
   </div>
 
   <!-- Filter Controls -->
-  <div class="filter-controls">
-    <div class="filter-title">Filter Peta</div>
-    <div class="filter-buttons">
-      <button 
-        *ngFor="let filter of filterOptions"
-        class="map-filter"
-        [class.active]="filter.active"
-        (click)="filterMarkers(filter.id)"
-      >
-        {{ filter.label }}
-      </button>
-    </div>
-  </div>
+  <ion-card class="filter-card">
+    <ion-card-content>
+      <div class="filter-title">Filter Peta</div>
+      <div class="filter-buttons">
+        <ion-button 
+          *ngFor="let filter of filterOptions"
+          [fill]="filter.active ? 'solid' : 'outline'"
+          [color]="filter.active ? 'primary' : 'medium'"
+          size="small"
+          class="filter-btn"
+          (click)="filterMarkers(filter.id)"
+        >
+          {{ filter.label }}
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
   <!-- Content Section -->
   <div class="content-section">
@@ -81,69 +89,86 @@
     
     <!-- Stats Grid -->
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-value success">{{ getTotalActive() | number }}</div>
-        <div class="stat-label">Total Aktif</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value primary">{{ getCityUptime() }}</div>
-        <div class="stat-label">Uptime Kota</div>
-      </div>
+      <ion-card class="stat-card">
+        <ion-card-content>
+          <div class="stat-value success">{{ getTotalActive() | number }}</div>
+          <div class="stat-label">Total Aktif</div>
+        </ion-card-content>
+      </ion-card>
+      
+      <ion-card class="stat-card">
+        <ion-card-content>
+          <div class="stat-value primary">{{ getCityUptime() }}</div>
+          <div class="stat-label">Uptime Kota</div>
+        </ion-card-content>
+      </ion-card>
     </div>
     
     <!-- Public Locations -->
-    <div 
-      class="device-card" 
+    <ion-card 
       *ngFor="let location of getPublicLocations()"
+      class="location-card"
       [ngClass]="location.status"
+      button="true"
       (click)="showLocationDetail(location.name)"
     >
-      <div class="device-header">
-        <div class="device-info">
-          <h3>{{ location.name }}</h3>
-          <p>{{ location.distance }} • {{ location.category }} • {{ location.address }}</p>
+      <ion-card-content>
+        <div class="location-header">
+          <div class="location-info">
+            <h3>{{ location.name }}</h3>
+            <p>{{ location.distance }} • {{ location.category }} • {{ location.address }}</p>
+          </div>
+          <div class="location-status" [ngClass]="location.status">
+            {{ getStatusText(location) }}
+          </div>
         </div>
-        <div class="device-status" [ngClass]="location.status">
-          {{ getStatusText(location) }}
-        </div>
-      </div>
-    </div>
+      </ion-card-content>
+    </ion-card>
     
     <!-- User Devices Section -->
-    <div class="user-devices-title">Perangkat Anda di Solo</div>
-    
-    <div 
-      class="device-card user-device" 
-      *ngFor="let device of getUserDevices()"
-      (click)="showDeviceDetail(device.id)"
-    >
-      <div class="device-header">
-        <div class="device-info">
-          <h3>{{ device.name }}</h3>
-          <p>{{ device.category }} • {{ device.address }}</p>
-        </div>
-        <div class="device-status user">● Milik Anda</div>
-      </div>
-      <div class="device-metrics" *ngIf="device.health && device.health > 0">
-        <div class="metric">
-          <div class="metric-value">{{ device.health }}%</div>
-          <div class="metric-label">Health</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value">Online</div>
-          <div class="metric-label">Status</div>
-        </div>
-      </div>
-      <div class="device-metrics" *ngIf="!device.health || device.health === 0">
-        <div class="metric">
-          <div class="metric-value offline">0%</div>
-          <div class="metric-label">Health</div>
-        </div>
-        <div class="metric">
-          <div class="metric-value offline">Offline</div>
-          <div class="metric-label">Status</div>
-        </div>
-      </div>
+    <div class="user-devices-section">
+      <div class="section-subtitle">Perangkat Anda di Solo</div>
+      
+      <ion-card 
+        *ngFor="let device of getUserDevices()"
+        class="device-card user-device"
+        button="true"
+        (click)="showDeviceDetail(device.id)"
+      >
+        <ion-card-content>
+          <div class="device-header">
+            <div class="device-info">
+              <h3>{{ device.name }}</h3>
+              <p>{{ device.category }} • {{ device.address }}</p>
+            </div>
+            <div class="device-status user">● Milik Anda</div>
+          </div>
+          
+          <!-- Device Metrics -->
+          <div class="device-metrics" *ngIf="device.health && device.health > 0">
+            <div class="metric">
+              <div class="metric-value">{{ device.health }}%</div>
+              <div class="metric-label">Health</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value">Online</div>
+              <div class="metric-label">Status</div>
+            </div>
+          </div>
+          
+          <div class="device-metrics" *ngIf="!device.health || device.health === 0">
+            <div class="metric">
+              <div class="metric-value offline">0%</div>
+              <div class="metric-label">Health</div>
+            </div>
+            <div class="metric">
+              <div class="metric-value offline">Offline</div>
+              <div class="metric-label">Status</div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
     </div>
   </div>
+
 </ion-content>
