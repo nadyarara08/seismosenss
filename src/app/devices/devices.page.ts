@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardContent, IonBadge, IonIcon } from '@ionic/angular/standalone';
+import { Component, OnInit } from '@angular/core';
+import { IonContent, IonCard, IonCardContent, IonBadge, IonIcon, IonFab, IonFabButton, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { warning, checkmarkCircle, closeCircle } from 'ionicons/icons';
+import { checkmarkCircle, warningOutline, closeCircle, add, ellipse, warning } from 'ionicons/icons';
 
 interface Device {
   id: string;
@@ -10,19 +9,17 @@ interface Device {
   location: string;
   address: string;
   status: 'online' | 'warning' | 'offline';
-  percentage?: number;
-  lastSeen?: string;
+  percentage: number;
 }
 
 @Component({
   selector: 'app-devices',
-  standalone: true,
-  imports: [CommonModule, IonContent, IonHeader, IonToolbar, IonTitle, IonCard, IonCardContent, IonBadge, IonIcon],
   templateUrl: './devices.page.html',
-  styleUrls: ['./devices.page.scss']
+  styleUrls: ['./devices.page.scss'],
+  standalone: true,
+  imports: [IonContent, IonCard, IonCardContent, IonBadge, IonIcon, IonFab, IonFabButton]
 })
-export class DevicesPage {
-
+export class DevicesPage implements OnInit {
   devices: Device[] = [
     {
       id: 'SMS-USER-001',
@@ -30,8 +27,7 @@ export class DevicesPage {
       location: 'Rumah Tinggal',
       address: 'Jl. Slamet Riyadi No. 234',
       status: 'online',
-      percentage: 95,
-      lastSeen: 'Aktif sekarang'
+      percentage: 95
     },
     {
       id: 'SMS-USER-002',
@@ -39,8 +35,7 @@ export class DevicesPage {
       location: 'Kantor',
       address: 'Jl. Dr. Rajiman No. 45',
       status: 'warning',
-      percentage: 78,
-      lastSeen: '5 menit lalu'
+      percentage: 78
     },
     {
       id: 'SMS-USER-003',
@@ -48,63 +43,66 @@ export class DevicesPage {
       location: 'Gudang',
       address: 'Jl. Adi Sucipto No. 12',
       status: 'offline',
-      lastSeen: '2 jam lalu'
+      percentage: 0
     }
   ];
 
-  constructor() {
-    addIcons({ warning, checkmarkCircle, closeCircle });
+  constructor(private alertController: AlertController) {
+    addIcons({ checkmarkCircle, warningOutline, closeCircle, add, ellipse, warning });
   }
 
-  showDeviceDetail(deviceId: string) {
-    const device = this.devices.find(d => d.id === deviceId);
-    if (device) {
-      let statusText = '';
-      let details = '';
-      
-      switch (device.status) {
-        case 'online':
-          statusText = `✅ ${device.name} berfungsi normal`;
-          details = `• Sinyal: ${device.percentage}%\n• Battery: Good\n• Last Update: ${device.lastSeen}`;
-          break;
-        case 'warning':
-          statusText = `⚠️ ${device.name} memerlukan perhatian`;
-          details = `• Sinyal: ${device.percentage}%\n• Battery: Low\n• Last Update: ${device.lastSeen}`;
-          break;
-        case 'offline':
-          statusText = `❌ ${device.name} tidak terhubung`;
-          details = `• Status: Offline\n• Last Seen: ${device.lastSeen}\n• Periksa koneksi internet`;
-          break;
-      }
-      
-      alert(`${statusText}\n\n📍 ${device.location}\n${device.address}\n\n${details}`);
-    }
+  ngOnInit() {
+  }
+
+  async onDeviceClick(device: Device) {
+    const alert = await this.alertController.create({
+      header: device.name,
+      subHeader: `Status: ${device.status.toUpperCase()}`,
+      message: `
+        <strong>Device ID:</strong> ${device.id}<br>
+        <strong>Status:</strong> ${device.status.toUpperCase()}<br>
+        <strong>Battery:</strong> ${device.percentage}%<br><br>
+        <em>Detail perangkat dalam mode demo</em>
+      `,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  async onAddDevice() {
+    const alert = await this.alertController.create({
+      header: 'Tambah Perangkat',
+      message: 'Fitur tambah perangkat dalam mode demo. Silakan hubungi administrator untuk menambah perangkat baru.',
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   getStatusIcon(status: string): string {
     switch (status) {
-      case 'online': return 'checkmark-circle';
-      case 'warning': return 'warning';
-      case 'offline': return 'close-circle';
-      default: return 'help-circle';
+      case 'online':
+        return 'checkmark-circle';
+      case 'warning':
+        return 'warning-outline';
+      case 'offline':
+        return 'close-circle';
+      default:
+        return 'help-circle';
     }
   }
 
   getStatusText(device: Device): string {
     switch (device.status) {
-      case 'online': return `● Online (${device.percentage}%)`;
-      case 'warning': return `⚠ Warning (${device.percentage}%)`;
-      case 'offline': return '● Offline';
-      default: return '● Unknown';
-    }
-  }
-
-  getStatusColor(status: string): string {
-    switch (status) {
-      case 'online': return 'success';
-      case 'warning': return 'warning';
-      case 'offline': return 'danger';
-      default: return 'medium';
+      case 'online':
+        return `Online ${device.percentage}%`;
+      case 'warning':
+        return `Warning ${device.percentage}%`;
+      case 'offline':
+        return 'Offline';
+      default:
+        return 'Unknown';
     }
   }
 }

@@ -1,37 +1,70 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Perangkat Saya</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  <div class="welcome-text">
-    <div class="welcome-title">Perangkat Saya 📱</div>
-    <div class="welcome-subtitle">Kelola semua perangkat SeismoSens</div>
+<ion-content [fullscreen]="true" [scrollY]="true">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>Perangkat Saya</h1>
+      <p>Kelola semua perangkat SeismoSens</p>
+    </div>
   </div>
 
-  <div class="content-section">
-    <ion-card 
-      *ngFor="let device of devices" 
-      class="device-card"
-      [ngClass]="device.status"
-      (click)="showDeviceDetail(device.id)"
-      button
-    >
+  <!-- Device List Section -->
+  <div class="device-list-section">
+    <ion-card class="device-card online" (click)="onDeviceClick(devices[0])">
       <ion-card-content>
         <div class="device-header">
           <div class="device-info">
-            <h3>{{ device.name }}</h3>
-            <p>{{ device.location }} • {{ device.address }}</p>
+            <h3>{{ devices[0].name }}</h3>
+            <p>{{ devices[0].location }} • {{ devices[0].address }}</p>
           </div>
-          <div class="device-status" [ngClass]="device.status">
-            <ion-badge [color]="getStatusColor(device.status)">
-              <ion-icon [name]="getStatusIcon(device.status)"></ion-icon>
-              {{ getStatusText(device) }}
+          <div class="device-status">
+            <ion-badge class="status-online">
+              <ion-icon name="ellipse"></ion-icon>
+              Online ({{ devices[0].percentage }}%)
+            </ion-badge>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="device-card warning" (click)="onDeviceClick(devices[1])">
+      <ion-card-content>
+        <div class="device-header">
+          <div class="device-info">
+            <h3>{{ devices[1].name }}</h3>
+            <p>{{ devices[1].location }} • {{ devices[1].address }}</p>
+          </div>
+          <div class="device-status">
+            <ion-badge class="status-warning">
+              <ion-icon name="warning"></ion-icon>
+              Warning ({{ devices[1].percentage }}%)
+            </ion-badge>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="device-card offline" (click)="onDeviceClick(devices[2])">
+      <ion-card-content>
+        <div class="device-header">
+          <div class="device-info">
+            <h3>{{ devices[2].name }}</h3>
+            <p>{{ devices[2].location }} • {{ devices[2].address }}</p>
+          </div>
+          <div class="device-status">
+            <ion-badge class="status-offline">
+              <ion-icon name="ellipse"></ion-icon>
+              Offline
             </ion-badge>
           </div>
         </div>
       </ion-card-content>
     </ion-card>
   </div>
+
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="onAddDevice()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

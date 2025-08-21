@@ -1,13 +1,152 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>settings</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-content">
+      <h1>Pengaturan</h1>
+      <p>Konfigurasi aplikasi dan perangkat</p>
+    </div>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">settings</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Settings Sections -->
+  
+  <!-- Perangkat Section -->
+  <div class="settings-section">
+    <div class="settings-header">Perangkat</div>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Konfigurasi Perangkat')">
+      <div class="settings-icon device-icon" slot="start">📱</div>
+      <ion-label>
+        <h3>Konfigurasi Perangkat</h3>
+        <p>Atur nama, lokasi, dan parameter</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Update Firmware')">
+      <div class="settings-icon update-icon" slot="start">🔄</div>
+      <ion-label>
+        <h3>Update Firmware</h3>
+        <p>v2.1.0 tersedia</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Koneksi WiFi')">
+      <div class="settings-icon wifi-icon" slot="start">📶</div>
+      <ion-label>
+        <h3>Koneksi WiFi</h3>
+        <p>Terhubung ke SeismoSens_Network</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Data & Storage Section -->
+  <div class="settings-section">
+    <div class="settings-header">Data & Storage</div>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Manage Data')">
+      <div class="settings-icon data-icon" slot="start">📊</div>
+      <ion-label>
+        <h3>Manage Data</h3>
+        <p>Export, backup, dan analisis</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Storage')">
+      <div class="settings-icon storage-icon" slot="start">💾</div>
+      <ion-label>
+        <h3>Storage</h3>
+        <p>2.3GB dari 8GB terpakai</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Aplikasi Section -->
+  <div class="settings-section">
+    <div class="settings-header">Aplikasi</div>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Notifikasi')">
+      <div class="settings-icon notification-icon" slot="start">🔔</div>
+      <ion-label>
+        <h3>Notifikasi</h3>
+        <p>Alert dan peringatan sistem</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Bantuan')">
+      <div class="settings-icon help-icon" slot="start">❓</div>
+      <ion-label>
+        <h3>Bantuan & FAQ</h3>
+        <p>Panduan penggunaan aplikasi</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Profile Section -->
+  <div class="settings-section">
+    <div class="settings-header">Profil</div>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Edit Profil')">
+      <div class="settings-icon profile-icon" slot="start">👤</div>
+      <ion-label>
+        <h3>Edit Profil</h3>
+        <p>Nama, email, foto profil</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Keamanan')">
+      <div class="settings-icon security-icon" slot="start">🔒</div>
+      <ion-label>
+        <h3>Keamanan</h3>
+        <p>Password dan autentikasi</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Support Section -->
+  <div class="settings-section">
+    <div class="settings-header">Support</div>
+    
+    <ion-item class="settings-item" button (click)="showSetting('Hubungi Support')">
+      <div class="settings-icon support-icon" slot="start">💬</div>
+      <ion-label>
+        <h3>Hubungi Support</h3>
+        <p>Chat 24/7 dengan tim teknis</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showDeveloperList()">
+      <div class="settings-icon about-icon" slot="start">👥</div>
+      <ion-label>
+        <h3>Tim Pengembang</h3>
+        <p>Informasi pengembang SeismoSens</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+    
+    <ion-item class="settings-item" button (click)="showSetting('About SeismoSens')">
+      <div class="settings-icon about-icon" slot="start">ℹ️</div>
+      <ion-label>
+        <h3>About SeismoSens</h3>
+        <p>Versi 2.1.0 • Tim Pengembang</p>
+      </ion-label>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Logout Section -->
+  <div class="logout-section">
+    <ion-button expand="block" fill="outline" color="danger" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Keluar dari Akun
+    </ion-button>
+  </div>
 </ion-content>
