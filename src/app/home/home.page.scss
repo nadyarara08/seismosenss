@@ -1,27 +1,280 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+// Enable scrolling for home page
+ion-content {
+  --padding-bottom: 80px;
+  --overflow: scroll;
+  height: calc(100vh - 56px);
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-#container strong {
+// Header Section
+.header-section {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  padding: 20px;
+  color: white;
+  border-radius: 0 0 24px 24px;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.logo-text {
   font-size: 20px;
-  line-height: 26px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+.notification-icon {
+  position: relative;
+  font-size: 24px;
+  cursor: pointer;
+}
 
-  color: #8c8c8c;
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: 50%;
+  border: 2px solid white;
+}
 
+.welcome-section {
+  margin-bottom: 24px;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.welcome-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  font-family: 'Inter', sans-serif;
+}
+
+.stats-section {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 16px;
+  border-radius: 16px;
+  text-align: center;
+  flex: 1;
+  backdrop-filter: blur(10px);
+}
+
+.stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.stat-label {
+  font-size: 12px;
+  opacity: 0.9;
+  font-family: 'Inter', sans-serif;
+}
+
+// Content Section
+.content-section {
+  padding: 20px;
+  margin-bottom: 100px;
+}
+
+.alert-banner {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.alert-icon {
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 4px;
+  font-family: 'Inter', sans-serif;
+}
+
+.alert-text {
+  font-size: 13px;
+  color: #78350f;
+  font-family: 'Inter', sans-serif;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
   margin: 0;
+  font-family: 'Inter', sans-serif;
 }
 
-#container a {
-  text-decoration: none;
+.detail-link {
+  font-size: 14px;
+  color: #4f46e5;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-placeholder {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px 20px;
+}
+
+.chart-placeholder ion-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.chart-placeholder p {
+  font-size: 14px;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.device-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #10b981;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.device-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.device-info p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.device-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.device-status.online {
+  color: #10b981;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+.add-device-btn {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.add-device-btn ion-button {
+  --color: #4f46e5;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .header-section {
+    padding: 16px;
+  }
+  
+  .welcome-title {
+    font-size: 20px;
+  }
+  
+  .stats-section {
+    gap: 8px;
+  }
+  
+  .stat-card {
+    padding: 12px;
+  }
+  
+  .stat-number {
+    font-size: 20px;
+  }
+  
+  .content-section {
+    padding: 16px;
+  }
 }

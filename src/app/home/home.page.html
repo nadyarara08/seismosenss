@@ -1,27 +1,85 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>SeismoSens</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding">
-  <div class="welcome-text">
-    <div class="welcome-title">Halo, John! 👋</div>
-    <div class="welcome-subtitle">Sistem monitoring berjalan optimal</div>
+<ion-content [fullscreen]="true" [scrollY]="true">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="header-top">
+      <div class="logo-section">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">SeismoSens</div>
+      </div>
+      <div class="notification-icon" (click)="showNotifications()">
+        <ion-icon name="notifications-outline"></ion-icon>
+        <div class="notification-dot"></div>
+      </div>
+    </div>
+    
+    <div class="welcome-section">
+      <div class="welcome-title">Halo, John! 👋</div>
+      <div class="welcome-subtitle">Sistem monitoring berjalan optimal</div>
+    </div>
+    
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Perangkat</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2</div>
+        <div class="stat-label">Online</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">90%</div>
+        <div class="stat-label">Health</div>
+      </div>
+    </div>
   </div>
 
-  <div class="alert-banner">
-    <div class="alert-title">⚠ Perhatian</div>
-    <div class="alert-text">SMS-USER-003 offline sejak 2 jam lalu</div>
-  </div>
+  <!-- Content Section -->
+  <div class="content-section">
+    <!-- Alert Banner -->
+    <div class="alert-banner">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <div class="alert-title">Perhatian</div>
+        <div class="alert-text">SMS-USER-003 offline sejak 2 jam lalu</div>
+      </div>
+    </div>
 
-  <div class="device-card" (click)="showNotifications()">
-    <div class="device-header">
+    <!-- Monitoring Real-time Section -->
+    <div class="section-header">
+      <h2>Monitoring Real-time</h2>
+      <span class="detail-link" (click)="showDetail()">Detail</span>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-placeholder">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <p>Grafik monitoring real-time akan ditampilkan di sini</p>
+      </div>
+    </div>
+
+    <!-- Perangkat Saya Section -->
+    <div class="section-header">
+      <h2>Perangkat Saya</h2>
+      <span class="detail-link" (click)="showAllDevices()">Lihat Semua</span>
+    </div>
+    
+    <div class="device-card">
       <div class="device-info">
         <h3>SMS-USER-001</h3>
         <p>Rumah Tinggal • Surakarta</p>
       </div>
-      <div class="device-status online">● Online</div>
+      <div class="device-status online">
+        <span class="status-dot"></span>
+        Online
+      </div>
+    </div>
+    
+    <!-- Add Device Button -->
+    <div class="add-device-btn">
+      <ion-button fill="clear" color="primary" (click)="addDevice()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Tambah Perangkat
+      </ion-button>
     </div>
   </div>
 </ion-content>
