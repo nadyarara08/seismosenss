@@ -23,4 +23,28 @@ export const routes: Routes = [
     path: 'profile',
     loadComponent: () => import('./profile/profile.page').then( m => m.ProfilePage)
   },
+  {
+    path: 'services',
+    loadComponent: () => import('./services/services.page').then( m => m.ServicesPage)
+  },
+  {
+    path: 'guards',
+    loadComponent: () => import('./guards/auth.guards').then( m => m.GuardsPage)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
+  },
+  {
+    path: 'models',
+    loadComponent: () => import('./models/user.model').then( m => m.ModelsPage)
+  },
 ];

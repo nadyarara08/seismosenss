@@ -1,13 +1,274 @@
+<!-- profile.page.html -->
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>profile</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>
+      {{ currentSection === 'main' ? 'Profil' : 
+         currentSection === 'editProfile' ? 'Edit Profil' : 'Keamanan' }}
+    </ion-title>
+    <ion-button 
+      *ngIf="currentSection !== 'main'" 
+      slot="start" 
+      fill="clear" 
+      (click)="showSection('main')">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">profile</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Loading State -->
+  <div *ngIf="!user" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Memuat profil...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="user">
+    
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <ion-avatar class="profile-avatar">
+        <div class="avatar-initials">{{ getInitials(user.displayName) }}</div>
+      </ion-avatar>
+      <h2>{{ user.displayName || 'User' }}</h2>
+      <p>{{ user.email }}</p>
+      
+      <!-- Stats Grid -->
+      <ion-grid *ngIf="profileData">
+        <ion-row>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number">{{ profileData.devices }}</div>
+            <div class="stat-label">Perangkat</div>
+          </ion-col>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number">{{ profileData.activeDays }}</div>
+            <div class="stat-label">Hari Aktif</div>
+          </ion-col>
+          <ion-col size="4" class="stat-col">
+            <div class="stat-number">{{ profileData.dataUsage }}</div>
+            <div class="stat-label">Data</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Main Menu Section -->
+    <div *ngIf="currentSection === 'main'" class="menu-sections">
+      
+      <!-- Profile Section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Profil Saya</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item button (click)="showSection('editProfile')">
+              <div class="menu-icon profile-icon" slot="start">
+                <ion-icon name="person-outline"></ion-icon>
+              </div>
+              <ion-label>
+                <h3>Edit Profil</h3>
+                <p>Nama, email, foto profil</p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-item>
+            
+            <ion-item button (click)="showSection('security')">
+              <div class="menu-icon security-icon" slot="start">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </div>
+              <ion-label>
+                <h3>Keamanan</h3>
+                <p>Password dan autentikasi</p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Support Section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Support</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item button (click)="handleSupportChat()">
+              <div class="menu-icon support-icon" slot="start">
+                <ion-icon name="chatbubble-outline"></ion-icon>
+              </div>
+              <ion-label>
+                <h3>Hubungi Support</h3>
+                <p>Chat 24/7 dengan tim teknis</p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-item>
+            
+            <ion-item button (click)="handleAboutInfo()">
+              <div class="menu-icon about-icon" slot="start">
+                <ion-icon name="information-circle-outline"></ion-icon>
+              </div>
+              <ion-label>
+                <h3>About SeismoSens</h3>
+                <p>Versi 2.1.0 • Tim Pengembang</p>
+              </ion-label>
+              <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Logout Button -->
+      <div class="logout-container">
+        <ion-button 
+          expand="block" 
+          color="danger" 
+          (click)="handleLogout()"
+          [disabled]="loading">
+          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+          <span *ngIf="!loading">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            Keluar dari Akun
+          </span>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div *ngIf="currentSection === 'editProfile'" class="edit-section">
+      <ion-card>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Nama Lengkap</ion-label>
+              <ion-input 
+                [(ngModel)]="editForm.displayName"
+                placeholder="Masukkan nama lengkap"
+                type="text">
+              </ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Email</ion-label>
+              <ion-input 
+                [value]="user.email"
+                readonly
+                color="medium">
+              </ion-input>
+              <ion-label class="input-note">Email tidak dapat diubah</ion-label>
+            </ion-item>
+          </ion-list>
+          
+          <ion-button 
+            expand="block" 
+            (click)="handleEditProfile()"
+            [disabled]="loading || !editForm.displayName.trim()">
+            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+            <span *ngIf="!loading">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Simpan Perubahan
+            </span>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Security Section -->
+    <div *ngIf="currentSection === 'security'" class="security-section">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Ubah Password</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Password Saat Ini</ion-label>
+              <ion-input 
+                [(ngModel)]="passwordForm.currentPassword"
+                placeholder="Masukkan password saat ini"
+                [type]="showPassword ? 'text' : 'password'">
+              </ion-input>
+              <ion-button 
+                slot="end" 
+                fill="clear" 
+                (click)="togglePasswordVisibility()">
+                <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </ion-button>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Password Baru</ion-label>
+              <ion-input 
+                [(ngModel)]="passwordForm.newPassword"
+                placeholder="Minimal 6 karakter"
+                type="password">
+              </ion-input>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">Konfirmasi Password Baru</ion-label>
+              <ion-input 
+                [(ngModel)]="passwordForm.confirmPassword"
+                placeholder="Ulangi password baru"
+                [type]="showConfirmPassword ? 'text' : 'password'">
+              </ion-input>
+              <ion-button 
+                slot="end" 
+                fill="clear" 
+                (click)="toggleConfirmPasswordVisibility()">
+                <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+          
+          <ion-button 
+            expand="block" 
+            color="success"
+            (click)="handleChangePassword()"
+            [disabled]="loading || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword">
+            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+            <span *ngIf="!loading">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
+              Ubah Password
+            </span>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Firebase Integration Guide -->
+    <ion-card class="integration-guide">
+      <ion-card-header>
+        <ion-card-title>🔧 Panduan Integrasi Firebase</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="guide-steps">
+          <p><strong>1.</strong> <code>npm install @angular/fire firebase</code></p>
+          <p><strong>2.</strong> Buat project di console.firebase.google.com</p>
+          <p><strong>3.</strong> Aktifkan Authentication (Email/Password)</p>
+          <p><strong>4.</strong> Buat database Firestore</p>
+          <p><strong>5.</strong> Salin config dan update environment</p>
+          <p><strong>6.</strong> Import AngularFireModule di main.ts</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Toast Messages -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    duration="3000"
+    position="bottom"
+    (didDismiss)="showToast = false">
+  </ion-toast>
+
+  <!-- Alert Dialog -->
+  <ion-alert
+    [isOpen]="showAlert"
+    [message]="alertMessage"
+    [buttons]="alertButtons"
+    (didDismiss)="showAlert = false">
+  </ion-alert>
 </ion-content>
