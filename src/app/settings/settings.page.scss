@@ -3,10 +3,6 @@
   --background: var(--ion-color-step-50);
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
-
 ion-content {
   --padding-top: 0;
   --padding-bottom: 100px;
@@ -15,10 +11,12 @@ ion-content {
 // Header Section
 .header-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px 30px;
+  padding: 50px 0 40px;
   color: white;
   
   .header-content {
+    padding: 0 20px;
+    
     h1 {
       font-family: 'Inter', sans-serif;
       font-size: 28px;
@@ -41,7 +39,6 @@ ion-content {
   background: white;
   margin: 16px;
   border-radius: 16px;
-  overflow: default;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
@@ -173,7 +170,7 @@ ion-content {
 .logout-section {
   padding: 20px;
   margin-top: 20px;
-  margin-bottom: 100px;
+  margin-bottom: 40px;
   
   ion-button {
     --border-radius: 25px;
@@ -186,7 +183,11 @@ ion-content {
 // Responsive design
 @media (max-width: 768px) {
   .header-section {
-    padding: 10px 16px;
+    padding: 12px 0;
+  }
+  
+  .header-content {
+    padding: 0 16px;
   }
   
   .welcome-title {
