@@ -14,13 +14,13 @@ export class NoAuthGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    return this.firebaseService.getCurrentUser().pipe(
+    return this.firebaseService.user$.pipe(   // <-- pakai user$ observable
       take(1),
       map(user => {
         if (!user) {
-          return true;
+          return true;  // user belum login, boleh akses halaman
         } else {
-          this.router.navigate(['/dashboard']); // kalau sudah login, lempar ke dashboard
+          this.router.navigate(['/dashboard']); // user sudah login, redirect
           return false;
         }
       })

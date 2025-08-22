@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(): Observable<boolean> {
-    return this.firebaseService.getCurrentUser().pipe(
+    return this.firebaseService.user$.pipe(   // <-- pakai user$ observable
       take(1),
       map(user => {
         if (user) {
