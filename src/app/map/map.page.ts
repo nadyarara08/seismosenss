@@ -74,7 +74,6 @@ export class MapPage implements OnDestroy {
 
   cityUptime: string = '97.4%';
 
-  // Filter options
   filterOptions: FilterType[] = [
     { id: 'all', label: 'Semua', active: true },
     { id: 'normal', label: 'Normal', active: false },
@@ -83,7 +82,6 @@ export class MapPage implements OnDestroy {
     { id: 'user', label: 'Milik Saya', active: false }
   ];
 
-  // Legend data
   legendItems: LegendItem[] = [
     { color: '#10b981', label: 'Normal', count: 1156 },
     { color: '#f59e0b', label: 'Warning', count: 23 },
@@ -91,15 +89,14 @@ export class MapPage implements OnDestroy {
     { color: '#3b82f6', label: 'Perangkat Anda', count: 3 }
   ];
 
-  // Sensor locations
   sensorLocations: SensorLocation[] = [
-    { id: 'SMS-USER-001', name: 'SMS-USER-001', lat: -7.5694, lng: 110.8192, status: 'user', category: 'Rumah Tinggal', address: 'Jl. Slamet Riyadi No. 234', health: 95 },
-    { id: 'SMS-USER-002', name: 'SMS-USER-002', lat: -7.5755, lng: 110.8243, status: 'user', category: 'Kantor', address: 'Jl. Dr. Rajiman No. 45', health: 78 },
-    { id: 'SMS-USER-003', name: 'SMS-USER-003', lat: -7.5601, lng: 110.8315, status: 'user', category: 'Gudang', address: 'Jl. Adi Sucipto No. 12', health: 0 },
-    { id: 'BALAI-KOTA', name: 'Balai Kota Surakarta', lat: -7.5663, lng: 110.8281, status: 'normal', category: 'Pemerintahan', address: 'Jl. Jend. Sudirman' },
-    { id: 'RSUD-MOEWARDI', name: 'RSUD Dr. Moewardi', lat: -7.5589, lng: 110.8204, status: 'normal', category: 'Rumah Sakit', address: 'Jl. Kol. Sutarto' },
-    { id: 'UNS-KENTINGAN', name: 'UNS Kentingan', lat: -7.5812, lng: 110.8372, status: 'warning', category: 'Universitas', address: 'Jl. Ir. Sutami' },
-    { id: 'KERATON', name: 'Keraton Surakarta', lat: -7.5711, lng: 110.8243, status: 'normal', category: 'Budaya', address: 'Jl. Brigjen Slamet Riyadi' }
+    { id: 'SMS-USER-001', name: 'SMS-USER-001', lat: -7.5694, lng: 110.8192, status: 'user', category: 'Rumah Tinggal', address: 'Jl. Slamet Riyadi No. 234', health: 99, distance: '1.2 km' },
+    { id: 'SMS-USER-002', name: 'SMS-USER-002', lat: -7.5755, lng: 110.8243, status: 'user', category: 'Kantor', address: 'Jl. Dr. Rajiman No. 45', health: 78, distance: '0.8 km' },
+    { id: 'SMS-USER-003', name: 'SMS-USER-003', lat: -7.5601, lng: 110.8315, status: 'user', category: 'Gudang', address: 'Jl. Adi Sucipto No. 12', health: 0, distance: '2.1 km' },
+    { id: 'BALAI-KOTA', name: 'Balai Kota Surakarta', lat: -7.5663, lng: 110.8281, status: 'normal', category: 'Pemerintahan', address: 'Jl. Jend. Sudirman', distance: '0.8 km' },
+    { id: 'RSUD-MOEWARDI', name: 'RSUD Dr. Moewardi', lat: -7.5589, lng: 110.8204, status: 'normal', category: 'Rumah Sakit', address: 'Jl. Kol. Sutarto', distance: '1.2 km' },
+    { id: 'UNS-KENTINGAN', name: 'UNS Kentingan', lat: -7.5812, lng: 110.8372, status: 'warning', category: 'Universitas', address: 'Jl. Ir. Sutami', distance: '2.1 km' },
+    { id: 'KERATON', name: 'Keraton Surakarta', lat: -7.5711, lng: 110.8243, status: 'normal', category: 'Budaya', address: 'Jl. Brigjen Slamet Riyadi', distance: '1.8 km' }
   ];
 
   constructor() {
@@ -107,18 +104,33 @@ export class MapPage implements OnDestroy {
   }
 
   ionViewDidEnter() {
-    // Delay lebih lama untuk memastikan DOM dan CSS sudah siap
+    console.log('ionViewDidEnter called');
+    
     setTimeout(() => {
+      console.log('Starting map initialization...');
       this.initializeMap();
     }, 300);
 
-    // realtime update simulasi
+    setTimeout(() => {
+      if (this.map) {
+        console.log('First additional refresh');
+        this.map.invalidateSize(true);
+        this.fitToMarkers();
+      }
+    }, 800);
+    
+    setTimeout(() => {
+      if (this.map) {
+        console.log('Second additional refresh');
+        this.forceMapRefresh();
+      }
+    }, 1500);
+
     setInterval(() => this.updateStats(), 5000);
     setInterval(() => this.updateTime(), 60000);
   }
 
   ionViewWillLeave() {
-    // Cleanup saat meninggalkan halaman
     this.destroyMap();
   }
 
@@ -137,16 +149,13 @@ export class MapPage implements OnDestroy {
   }
 
   initializeMap() {
-    // Cek apakah element map ada
     const mapElement = document.getElementById('map');
     if (!mapElement) {
       console.error('Map element not found');
-      // Retry setelah delay
       setTimeout(() => this.initializeMap(), 500);
       return;
     }
 
-    // Pastikan element memiliki dimensi
     const rect = mapElement.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) {
       console.warn('Map element has no dimensions, retrying...');
@@ -154,13 +163,11 @@ export class MapPage implements OnDestroy {
       return;
     }
 
-    // Hapus map lama jika ada
     if (this.map) {
       this.destroyMap();
     }
 
     try {
-      // Inisialisasi map dengan opsi lebih lengkap
       this.map = L.map('map', {
         center: [-7.5755, 110.8243],
         zoom: 13,
@@ -171,65 +178,72 @@ export class MapPage implements OnDestroy {
         keyboard: true,
         dragging: true,
         touchZoom: true,
-        preferCanvas: false
+        preferCanvas: false,
+        renderer: L.canvas()
       });
 
-      // Add tile layer dengan error handling
       const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 18,
         minZoom: 10,
-        errorTileUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+        crossOrigin: true
       });
 
       tileLayer.on('tileerror', (error) => {
-        console.warn('Tile loading error:', error);
+        console.warn('Tile loading error, trying alternative:', error);
+        const fallbackLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 18,
+          minZoom: 10
+        });
+        fallbackLayer.addTo(this.map);
       });
 
       tileLayer.addTo(this.map);
 
-      // Tunggu map selesai load
       this.map.whenReady(() => {
         console.log('Map is ready');
         this.isMapInitialized = true;
         
-        // Multiple attempts to ensure proper initialization
+        this.map.invalidateSize(true);
+        
         setTimeout(() => {
           if (this.map) {
-            this.map.invalidateSize();
+            this.map.invalidateSize(true);
             this.addSensorMarkers();
-            
-            // Fit to markers setelah semua marker ditambahkan
-            setTimeout(() => {
-              this.fitToMarkers();
-            }, 100);
           }
-        }, 200);
+        }, 100);
+        
+        setTimeout(() => {
+          if (this.map) {
+            this.map.invalidateSize(true);
+            if (this.allMarkers.length > 0) {
+              this.fitToMarkers();
+            }
+          }
+        }, 500);
       });
 
-      // Event listener untuk resize
       this.map.on('resize', () => {
         if (this.map) {
-          this.map.invalidateSize();
+          this.map.invalidateSize(true);
         }
       });
 
-      // Force invalidate size setelah map dibuat
       setTimeout(() => {
         if (this.map) {
-          this.map.invalidateSize();
-          // Force refresh untuk memastikan tiles loaded dengan benar
-          this.map.eachLayer((layer: any) => {
-            if (layer.redraw) {
-              layer.redraw();
-            }
-          });
+          this.map.invalidateSize(true);
         }
       }, 100);
 
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize(true);
+        }
+      }, 500);
+
     } catch (error) {
       console.error('Error initializing map:', error);
-      // Retry jika ada error
       setTimeout(() => this.initializeMap(), 1000);
     }
   }
@@ -240,7 +254,6 @@ export class MapPage implements OnDestroy {
       return;
     }
 
-    // Clear existing markers
     this.markers = [];
     this.allMarkers = [];
 
@@ -265,7 +278,6 @@ export class MapPage implements OnDestroy {
 
     const marker = L.marker([sensor.lat, sensor.lng], { icon: customIcon });
     
-    // Enhanced popup content
     const popupContent = `
       <div class="sensor-popup">
         <h4>${sensor.name}</h4>
@@ -295,21 +307,24 @@ export class MapPage implements OnDestroy {
     return `<div style="width:16px;height:16px;background:${color};border:2px solid white;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>`;
   }
 
-  // ========== Map controls ==========
+  // Map controls - Fixed functionality
   zoomIn() { 
     if (this.map && this.isMapInitialized) {
+      console.log('Zoom in clicked');
       this.map.zoomIn();
     }
   }
   
   zoomOut() { 
     if (this.map && this.isMapInitialized) {
+      console.log('Zoom out clicked');
       this.map.zoomOut();
     }
   }
   
   centerMap() { 
     if (this.map && this.isMapInitialized) {
+      console.log('Center map clicked');
       this.map.setView([-7.5755, 110.8243], 13);
     }
   }
@@ -318,34 +333,53 @@ export class MapPage implements OnDestroy {
     if (this.allMarkers.length > 0 && this.map && this.isMapInitialized) {
       try {
         const group = L.featureGroup(this.allMarkers);
-        this.map.fitBounds(group.getBounds(), { 
-          padding: [20, 20],
-          maxZoom: 16
-        });
+        this.map.fitBounds(group.getBounds(), { padding: [20, 20], maxZoom: 16 });
       } catch (error) {
         console.error('Error fitting to markers:', error);
       }
     }
   }
-  
-  adjustToLocation(event: any) {
-    const loc = this.sensorLocations.find(l => l.id === event.detail.value);
-    if (loc && this.map && this.isMapInitialized) {
-      this.map.setView([loc.lat, loc.lng], 16, {
-        animate: true,
-        duration: 1
-      });
+
+  // 🔹 Tambahan method baru
+  forceMapRefresh() {
+    if (this.map && this.isMapInitialized) {
+      console.log('Force refreshing map...');
+      
+      this.map.invalidateSize({ animate: false, pan: false });
+      
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize({ animate: true, pan: false });
+          const center = this.map.getCenter();
+          this.map.panTo(center);
+        }
+      }, 100);
+      
+      setTimeout(() => {
+        if (this.map) {
+          this.map.invalidateSize({ animate: false, pan: true });
+          this.map.eachLayer((layer: any) => {
+            if (layer.redraw) {
+              layer.redraw();
+            }
+          });
+        }
+      }, 300);
     }
   }
 
-  // ========== Extra from seismosens.js ==========
+  adjustToLocation(event: any) {
+    const loc = this.sensorLocations.find(l => l.id === event.detail.value);
+    if (loc && this.map && this.isMapInitialized) {
+      this.map.setView([loc.lat, loc.lng], 16, { animate: true, duration: 1 });
+    }
+  }
+
   updateStats() {
-    // simulasi update uptime
     const uptime = parseFloat(this.cityUptime.replace('%', ''));
     const newValue = uptime + (Math.random() - 0.5) * 0.5;
     this.cityUptime = `${Math.max(90, Math.min(100, newValue)).toFixed(1)}%`;
     
-    // Update legend counts (simulasi)
     this.legendItems = this.legendItems.map(item => ({
       ...item,
       count: item.count + Math.floor((Math.random() - 0.5) * 10)
@@ -462,9 +496,29 @@ export class MapPage implements OnDestroy {
   refreshMap() {
     if (this.map) {
       setTimeout(() => {
-        this.map.invalidateSize();
+        this.map.invalidateSize(true);
         this.fitToMarkers();
       }, 100);
+    }
+  }
+
+  // Method khusus untuk fix square container
+  forceMapResize() {
+    if (this.map && this.isMapInitialized) {
+      // Multiple resize attempts
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          if (this.map) {
+            this.map.invalidateSize(true);
+            // Force redraw tiles
+            this.map.eachLayer((layer: any) => {
+              if (layer.redraw) {
+                layer.redraw();
+              }
+            });
+          }
+        }, i * 200);
+      }
     }
   }
 }

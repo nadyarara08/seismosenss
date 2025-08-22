@@ -1,5 +1,5 @@
 <!-- Perbaikan HTML - Hapus ion-card dari map container -->
-<ion-content [fullscreen]="true">
+<ion-content [scrollY]="true">
   <!-- Header Section -->
   <div class="header-section">
     <div class="header-content">
@@ -8,36 +8,40 @@
     </div>
   </div>
 
-  <!-- Map Container - DIPERBAIKI -->
+  <!-- Map Container with Card -->
   <div class="map-section">
-    <div class="map-container">
-      <div id="map"></div>
-      
-      <!-- Map Legend - pindah ke dalam map container -->
-      <div class="map-legend">
-        <div class="legend-title">SeismoSens Network</div>
-        <div class="legend-item" *ngFor="let item of legendItems">
-          <div class="legend-dot" [style.background]="item.color"></div>
-          <span>{{ item.label }} ({{ item.count }})</span>
-        </div>
-      </div>
+    <ion-card class="map-card">
+      <ion-card-content>
+        <div class="map-container">
+          <div id="map"></div>
+          
+          <!-- Map Legend - pindah ke dalam map container -->
+          <div class="map-legend">
+            <div class="legend-title">SeismoSens Network</div>
+            <div class="legend-item" *ngFor="let item of legendItems">
+              <div class="legend-dot" [style.background]="item.color"></div>
+              <span>{{ item.label }} ({{ item.count }})</span>
+            </div>
+          </div>
 
-      <!-- Map Controls - pindah ke dalam map container -->
-      <div class="map-controls">
-        <ion-fab-button size="small" color="light" class="map-control-btn" (click)="zoomIn()">
-          <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-button size="small" color="light" class="map-control-btn" (click)="zoomOut()">
-          <ion-icon name="remove"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-button size="small" color="light" class="map-control-btn" (click)="centerMap()">
-          <ion-icon name="locate"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-button size="small" color="light" class="map-control-btn" (click)="fitToMarkers()">
-          <ion-icon name="expand"></ion-icon>
-        </ion-fab-button>
-      </div>
-    </div>
+          <!-- Map Controls - pindah ke dalam map container -->
+          <div class="map-controls">
+            <ion-fab-button size="small" color="light" class="map-control-btn" (click)="zoomIn()">
+              <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button size="small" color="light" class="map-control-btn" (click)="zoomOut()">
+              <ion-icon name="remove"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button size="small" color="light" class="map-control-btn" (click)="centerMap()">
+              <ion-icon name="locate"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button size="small" color="light" class="map-control-btn" (click)="fitToMarkers()">
+              <ion-icon name="expand"></ion-icon>
+            </ion-fab-button>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
   </div>
 
   <!-- Filter Controls -->
@@ -58,4 +62,74 @@
       </div>
     </ion-card-content>
   </ion-card>
+
+  <!-- Statistics Section -->
+  <div class="content-section">
+    <div class="section-title">Perangkat di Surakarta</div>
+    <div class="stats-grid">
+      <ion-card class="stat-card">
+        <ion-card-content>
+          <div class="stat-value success">{{ getTotalActive() }}</div>
+          <div class="stat-label">Total Aktif</div>
+        </ion-card-content>
+      </ion-card>
+      <ion-card class="stat-card">
+        <ion-card-content>
+          <div class="stat-value primary">{{ getCityUptime() }}</div>
+          <div class="stat-label">Uptime Kota</div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Public Locations -->
+    <div class="section-subtitle">Lokasi Publik</div>
+    <div class="location-card" 
+         *ngFor="let location of getPublicLocations()" 
+         [ngClass]="location.status"
+         (click)="showLocationDetail(location.name)">
+      <ion-card-content>
+        <div class="location-header">
+          <div class="location-info">
+            <h3>{{ location.name }}</h3>
+            <p>{{ location.distance || '0.8 km' }} • {{ location.category }} • {{ location.address }}</p>
+          </div>
+          <div class="location-status" [ngClass]="location.status">
+            {{ getStatusText(location) }}
+          </div>
+        </div>
+      </ion-card-content>
+    </div>
+
+    <!-- User Devices Section -->
+    <div class="section-subtitle user-devices-section">Perangkat Anda di Solo</div>
+    <div class="device-card user-device" 
+         *ngFor="let device of getUserDevices()" 
+         (click)="showDeviceDetail(device.id)">
+      <ion-card-content>
+        <div class="device-header">
+          <div class="device-info">
+            <h3>{{ device.id }}</h3>
+            <p>{{ device.category }} • {{ device.address }}</p>
+          </div>
+          <div class="device-status user">
+            {{ device.health && device.health > 0 ? 'Milik Anda' : 'Milik Anda' }}
+          </div>
+        </div>
+        <div class="device-metrics">
+          <div class="metric">
+            <div class="metric-value" [ngClass]="{ 'offline': !device.health || device.health === 0 }">
+              {{ device.health || 0 }}%
+            </div>
+            <div class="metric-label">Health</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value">
+              {{ device.health && device.health > 0 ? 'Online' : 'Offline' }}
+            </div>
+            <div class="metric-label">Status</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </div>
+  </div>
 </ion-content>

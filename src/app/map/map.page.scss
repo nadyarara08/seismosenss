@@ -6,10 +6,12 @@
 // Header Section
 .header-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px 30px;
+  padding: 50px 0 40px;
   color: white;
   
   .header-content {
+    padding: 0 20px;
+    
     h1 {
       font-family: 'Inter', sans-serif;
       font-size: 28px;
@@ -27,86 +29,101 @@
   }
 }
 
-// PERBAIKAN MAP SECTION
+// PERBAIKAN MAP SECTION - With card wrapper
 .map-section {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 20px 16px;
+  padding: 16px;
   background: var(--ion-color-step-50);
+  box-sizing: border-box;
+}
+
+.map-card {
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: var(--ion-box-shadow);
+  width: 300px;
+  height: 300px;
+  
+  ion-card-content {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
 }
 
 .map-container {
   position: relative;
   width: 100%;
-  max-width: 600px;
-  height: 300px;
-  margin: 0 auto;
+  height: 100%;
+  margin: 0;
+  border-radius: 16px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 #map {
-  width: 100%;
+  width: 100% !important;
   height: 100% !important;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   z-index: 1;
   position: relative;
+  box-sizing: border-box;
+  background: #f0f0f0;
 }
 
-// Map legend - positioning relatif terhadap map container
+// Map legend - completely solid white background
 .map-legend {
   position: absolute;
   top: 15px;
   left: 15px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: var(--ion-box-shadow);
+  background: #ffffff !important; // Force solid white background
+  border: 1px solid rgba(0, 0, 0, 0.1); // Add subtle border
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15); // Stronger shadow
+  font-size: 10px;
   z-index: 1000;
-  max-width: 200px;
-  border: 1px solid var(--ion-color-step-150);
+  backdrop-filter: none !important; // Remove any backdrop filter
+  opacity: 1 !important; // Ensure full opacity
 }
 
 .legend-title {
-  font-weight: 600;
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: var(--ion-color-dark);
+font-weight: 600;
+margin-bottom: 6px;
+font-size: 11px;
+color: #333333 !important; // Force dark text color
 }
 
 .legend-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  font-size: 13px;
-  color: var(--ion-color-dark);
+display: flex;
+align-items: center;
+margin-bottom: 4px;
+font-size: 10px;
+color: #666666 !important; // Force medium dark text color
 
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+&:last-of-type {
+  margin-bottom: 0;
+}
 }
 
 .legend-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 8px;
-  flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+width: 8px;
+height: 8px;
+border-radius: 50%;
+margin-right: 5px;
+flex-shrink: 0;
+border: 1px solid rgba(0, 0, 0, 0.2); // Darker border for better contrast
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-// Map controls - positioning relatif terhadap map container
+// Map controls - adjusted for smaller map
 .map-controls {
   position: absolute;
   top: 15px;
   right: 15px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   z-index: 1000;
 }
 
@@ -114,11 +131,22 @@
   --box-shadow: var(--ion-box-shadow);
   --background: rgba(255, 255, 255, 0.9);
   --color: var(--ion-color-dark);
+  --width: 28px;
+  --height: 28px;
   
   backdrop-filter: blur(10px);
+  cursor: pointer;
+  
+  ion-icon {
+    font-size: 14px;
+  }
   
   &:hover {
     --background: rgba(255, 255, 255, 1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -452,7 +480,11 @@
 // Responsive design
 @media (max-width: 768px) {
   .header-section {
-    padding: 12px 16px;
+    padding: 12px 0;
+  }
+  
+  .header-content {
+    padding: 0 16px;
   }
   
   .welcome-title {
@@ -465,11 +497,18 @@
   
   .map-section {
     padding: 16px 12px;
+    box-sizing: border-box;
+  }
+  
+  .map-container {
+    width: 100%;
+    margin: 0;
   }
   
   #map {
     height: 280px;
     min-height: 280px;
+    width: 100% !important;
   }
   
   .map-legend {
@@ -521,8 +560,9 @@
 // Dark mode support (Ionic 7)
 @media (prefers-color-scheme: dark) {
   .map-legend {
-    background: rgba(var(--ion-color-step-100-rgb), 0.95);
-    border-color: var(--ion-color-step-200);
+    background: #ffffff !important; // Force white even in dark mode
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25) !important;
   }
 
   .map-control-btn {
@@ -543,11 +583,31 @@
   background: var(--ion-background-color) !important;
 }
 
-// Pastikan leaflet container tampil penuh
+// Pastikan leaflet container tampil penuh - fix untuk square container
 :global(.leaflet-container) {
   width: 100% !important;
   height: 100% !important;
   border-radius: 16px;
+  box-sizing: border-box !important;
+  background: #f0f0f0 !important;
+  position: relative !important;
+}
+
+// Fix leaflet pane positioning
+:global(.leaflet-map-pane) {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+// Ensure tiles render properly in square container
+:global(.leaflet-tile-pane) {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+:global(.leaflet-tile) {
+  max-width: none !important;
+  max-height: none !important;
 }
 
 // Fix leaflet controls
