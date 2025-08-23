@@ -39,11 +39,8 @@
 html, body {
     margin: 0;       
     padding: 0;
-    box-sizing: border-box;  
-
-
-    min-height: 100%;
-    height: auto;
+    box-sizing: border-box; 
+    height: 100%;
     overflow-y: auto !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     background: #ffffff !important;
@@ -52,9 +49,8 @@ html, body {
 // Fix scrolling functionality
 ion-content {
   --background: #ffffff !important;
-  overflow-y: auto !important;
-  min-height: 100% !important;
-  height: auto !important;
+  overflow-y: auto;
+  height: 100%;
   
   &::-webkit-scrollbar {
     display: none !important;
@@ -206,19 +202,6 @@ p, span, div {
     }
   }
   
-  // COMMENT atau HAPUS styles yang tidak digunakan untuk Ionic app
-  /*
-  .status-bar {
-    // ... (comment semua styles desktop/mobile container)
-  }
-  
-  .main-content {
-    // ... (comment semua styles desktop/mobile container)  
-  }
-  
-  // dst... comment semua styles yang tidak relevan dengan Ionic
-  */
-  
   // Responsive - Sesuaikan dengan Ionic
   @media (max-width: 768px) {
     // Ionic-specific responsive styles
@@ -231,4 +214,22 @@ p, span, div {
       min-height: 300px !important;
       height: 300px !important;
     }
+  }
+
+  ion-header,
+  ion-toolbar {
+    --padding-start: 0 !important;
+    --padding-end: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+  }
+
+  ion-content {
+    --padding-start: 0 !important;
+    --padding-end: 0 !important;
+    --padding-top: 0 !important;
+    --padding-bottom: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
