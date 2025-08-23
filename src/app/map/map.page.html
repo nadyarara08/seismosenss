@@ -1,4 +1,3 @@
-<!-- Perbaikan HTML - Hapus ion-card dari map container -->
 <ion-content [scrollY]="true">
   <!-- Header Section -->
   <div class="header-section">
@@ -8,14 +7,15 @@
     </div>
   </div>
 
-  <!-- Map Container with Card -->
+  <!-- Map Container -->
   <div class="map-section">
     <ion-card class="map-card">
       <ion-card-content>
         <div class="map-container">
+          <!-- Tangram Map -->
           <div id="map"></div>
           
-          <!-- Map Legend - pindah ke dalam map container -->
+          <!-- Map Legend -->
           <div class="map-legend">
             <div class="legend-title">SeismoSens Network</div>
             <div class="legend-item" *ngFor="let item of legendItems">
@@ -24,7 +24,7 @@
             </div>
           </div>
 
-          <!-- Map Controls - pindah ke dalam map container -->
+          <!-- Map Controls -->
           <div class="map-controls">
             <ion-fab-button size="small" color="light" class="map-control-btn" (click)="zoomIn()">
               <ion-icon name="add"></ion-icon>

@@ -10,8 +10,7 @@ export const routes: Routes = [
   { path: 'settings', loadComponent: () => import('./settings/settings.page').then(m => m.SettingsPage) },
   { path: 'profile', loadComponent: () => import('./profile/profile.page').then(m => m.ProfilePage) },
   { path: 'services', loadComponent: () => import('./services/services.page').then(m => m.ServicesPage) },
-  { path: 'login', loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage) },
-  { path: 'register', loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage) },
   { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage) },
+  { path: 'map-tangram', loadComponent: () => import('./map/map.page').then(m => m.MapPage) },  
 
 ];
