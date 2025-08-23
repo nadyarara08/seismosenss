@@ -12,7 +12,7 @@
     <ion-card class="map-card">
       <ion-card-content>
         <div class="map-container">
-          <!-- Tangram Map -->
+          <!-- Leaflet Map -->
           <div id="map"></div>
           
           <!-- Map Legend -->
@@ -35,9 +35,6 @@
             <ion-fab-button size="small" color="light" class="map-control-btn" (click)="centerMap()">
               <ion-icon name="locate"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button size="small" color="light" class="map-control-btn" (click)="fitToMarkers()">
-              <ion-icon name="expand"></ion-icon>
-            </ion-fab-button>
           </div>
         </div>
       </ion-card-content>
@@ -55,7 +52,6 @@
           [color]="filter.active ? 'primary' : 'medium'"
           size="small"
           class="filter-btn"
-          (click)="filterMarkers(filter.id)"
         >
           {{ filter.label }}
         </ion-button>
@@ -85,8 +81,7 @@
     <div class="section-subtitle">Lokasi Publik</div>
     <div class="location-card" 
          *ngFor="let location of getPublicLocations()" 
-         [ngClass]="location.status"
-         (click)="showLocationDetail(location.name)">
+         [ngClass]="location.status">
       <ion-card-content>
         <div class="location-header">
           <div class="location-info">
@@ -103,8 +98,7 @@
     <!-- User Devices Section -->
     <div class="section-subtitle user-devices-section">Perangkat Anda di Solo</div>
     <div class="device-card user-device" 
-         *ngFor="let device of getUserDevices()" 
-         (click)="showDeviceDetail(device.id)">
+         *ngFor="let device of getUserDevices()">
       <ion-card-content>
         <div class="device-header">
           <div class="device-info">

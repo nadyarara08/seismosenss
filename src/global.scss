@@ -11,6 +11,7 @@
 
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
+@import "leaflet/dist/leaflet.css";
 
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
@@ -106,15 +107,12 @@ p, span, div {
 }
 
 .leaflet-container {
-    width: 100% !important;
-    min-height: 350px !important;
-    height: auto !important;
-    max-height: 500px;
-    border-radius: 16px;
-    box-sizing: border-box !important;
-    background: #f0f0f0 !important;
-    position: relative !important;
-    overflow: visible !important;
+  width: 100% !important;
+  height: 350px !important;
+  border-radius: 16px;
+  background: #f0f0f0 !important;
+  position: relative !important;
+  touch-action: auto !important; 
 }
 
 .leaflet-map-pane {
@@ -148,7 +146,7 @@ p, span, div {
   }
   
   .leaflet-control-container {
-    pointer-events: none;
+    pointer-events: auto !important;
   }
   
   .leaflet-control {

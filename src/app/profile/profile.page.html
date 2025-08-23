@@ -1,22 +1,5 @@
-<!-- profile.page.html -->
-<ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>
-      {{ currentSection === 'main' ? 'Profil' : 
-         currentSection === 'editProfile' ? 'Edit Profil' : 'Keamanan' }}
-    </ion-title>
-    <ion-button 
-      *ngIf="currentSection !== 'main'" 
-      slot="start" 
-      fill="clear" 
-      (click)="showSection('main')">
-      <ion-icon name="arrow-back-outline"></ion-icon>
-    </ion-button>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <!-- Loading State -->
+<ion-content [fullscreen]="true" scrollEvents="true" (ionScroll)="onScroll($event)">
+    <!-- Loading State -->
   <div *ngIf="!user" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
     <p>Memuat profil...</p>

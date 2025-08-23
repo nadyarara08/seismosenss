@@ -17,8 +17,7 @@ import {
 import { addIcons } from 'ionicons';
 import { add, remove, locate, expand, checkmarkCircle, warning, closeCircle } from 'ionicons/icons';
 
-// 🔹 Tangram dari index.html
-declare const Tangram: any;
+import * as L from 'leaflet';
 
 interface SensorLocation {
   id: string;
@@ -68,9 +67,8 @@ interface FilterType {
 })
 export class MapPage implements OnDestroy {
 
-  // 🔹 Ganti map jadi scene Tangram
-  scene: any;
-  isMapInitialized: boolean = false;
+  private map!: L.Map;
+  private markers: L.LayerGroup = L.layerGroup();
 
   cityUptime: string = '97.4%';
 
@@ -116,58 +114,59 @@ export class MapPage implements OnDestroy {
   }
 
   private destroyMap() {
-    if (this.scene) {
-      this.scene.destroy();
-      this.scene = null;
-      this.isMapInitialized = false;
+    if (this.map) {
+      this.map.remove();
     }
   }
 
-  initializeMap() {
-    const mapElement = document.getElementById('map') as HTMLElement;
+  private initializeMap() {
+    const mapElement = document.getElementById('map');
     if (!mapElement) {
       console.error('Map element not found');
       return;
     }
 
-    try {
-      // 🔹 Tangram setup
-      this.scene = Tangram.map({
-        scene: {
-          import: [
-            'https://www.nextzen.org/carto/bubble-wrap-style/10/bubble-wrap-style.zip'
-          ],
-          global: { sdk_mapzen_api_key: '' }
-        },
-        container: 'map',
-        center: [-7.5755, 110.8243],
-        zoom: 13
-      });
+    // ⬇️ konfigurasi lengkap (zoom, scroll, controls aktif)
+    this.map = L.map(mapElement, {
+      center: [-7.5755, 110.8243],
+      zoom: 13,
+      zoomControl: true,
+      scrollWheelZoom: true
+    });
 
-      this.scene.then((mapInstance: any) => {
-        console.log('Tangram map ready');
-        this.isMapInitialized = true;
-        this.addSensorMarkers(mapInstance);
-      });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
 
-    } catch (error) {
-      console.error('Error initializing Tangram:', error);
-    }
+    this.markers.addTo(this.map);
+    this.addSensorMarkers();
   }
 
-  // 🔹 Plot sensor sebagai marker ke Tangram
-  addSensorMarkers(mapInstance: any) {
+  private addSensorMarkers() {
+    this.markers.clearLayers();
     this.sensorLocations.forEach(sensor => {
       const color = this.getMarkerColor(sensor.status);
-      mapInstance.scene.addPointGeoJSON({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [sensor.lng, sensor.lat] },
-        properties: { color, name: sensor.name }
+      const icon = L.divIcon({
+        className: 'custom-marker',
+        html: `<div style="background:${color}; width:14px; height:14px; border-radius:50%; border:2px solid white;"></div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8]
       });
+
+      const marker = L.marker([sensor.lat, sensor.lng], { icon })
+        .bindPopup(`<b>${sensor.name}</b><br>${sensor.category || ''}<br>${sensor.address || ''}`);
+
+      // ⬇️ event klik biar muncul alert juga
+      marker.on('click', () => {
+        alert(`Anda mengklik ${sensor.name}\nStatus: ${this.getStatusText(sensor)}`);
+      });
+
+      this.markers.addLayer(marker);
     });
   }
 
-  getMarkerColor(status: string): string {
+  private getMarkerColor(status: string): string {
     const colors: any = {
       normal: '#10b981',
       warning: '#f59e0b',
@@ -177,23 +176,7 @@ export class MapPage implements OnDestroy {
     return colors[status] || '#6b7280';
   }
 
-  // ================== Helper/Statistik seperti aslinya ==================
-  updateStats() {
-    const uptime = parseFloat(this.cityUptime.replace('%', ''));
-    const newValue = uptime + (Math.random() - 0.5) * 0.5;
-    this.cityUptime = `${Math.max(90, Math.min(100, newValue)).toFixed(1)}%`;
-    
-    this.legendItems = this.legendItems.map(item => ({
-      ...item,
-      count: item.count + Math.floor((Math.random() - 0.5) * 10)
-    }));
-  }
-
-  updateTime() {
-    const now = new Date();
-    console.log("⏰ Time:", now.toLocaleTimeString());
-  }
-
+  // ================== Statistik ==================
   getTotalActive(): number {
     return this.sensorLocations.filter(s => s.status === 'normal' || s.status === 'user').length;
   }
@@ -220,39 +203,16 @@ export class MapPage implements OnDestroy {
     }
   }
 
-  zoomIn(){
-    if (this.scene && this.scene.getZoom) {
-      this.scene.setZoom(this.scene.getZoom() + 1);
-    }
+  // ================== Kontrol Zoom ==================
+  zoomIn() {
+    if (this.map) this.map.zoomIn();
   }
 
-  zoomOut(){
-    if (this.scene && this.scene.getZoom) {
-      this.scene.setZoom(this.scene.getZoom() - 1);
-    }
+  zoomOut() {
+    if (this.map) this.map.zoomOut();
   }
 
   centerMap() {
-    if (this.scene && this.scene.setCenter) {
-      this.scene.setCenter([-7.5755, 110.8243]);
-      this.scene.getZoom(13);
-    }
-  }
-
-  fitToMarkers(){
-    console.log("📍 Fit to all markers belum diimplementasi");
-  }
-
-  filterMarkers(filterId: string){
-    console.log("🔎 Filter:", filterId);
-    this.filterOptions.forEach(f => f.active = (f.id === filterId));
-  }
-
-  showLocationDetail(name: string){
-    console.log("📍 Detail lokasi:", name);
-  }
-
-  showDeviceDetail(id: string){
-    console.log("📱 Detail perangkat", id);
+    if (this.map) this.map.setView([-7.5755, 110.8243], 13);
   }
 }

@@ -162,6 +162,10 @@ export class ProfilePage implements OnInit {
     }, 1000);
   }
 
+  onScroll(event: any){
+    console.log('scrolling...', event);
+  }
+
   // ----- Helper Toast & Alert -----
   private showToastMessage(message: string) {
     this.toastMessage = message;
