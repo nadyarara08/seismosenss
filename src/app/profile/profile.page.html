@@ -28,24 +28,24 @@
     <!-- Profile Header -->
     <div class="profile-header">
       <ion-avatar class="profile-avatar">
-        <div class="avatar-initials">{{ getInitials(user.displayName) }}</div>
+        <div class="avatar-initials">{{ getInitials(user?.displayName || 'U') }}</div>
       </ion-avatar>
-      <h2>{{ user.displayName || 'User' }}</h2>
-      <p>{{ user.email }}</p>
+      <h2>{{ user?.displayName || 'User' }}</h2>
+      <p>{{ user?.email || '-' }}</p>
       
       <!-- Stats Grid -->
       <ion-grid *ngIf="profileData">
         <ion-row>
           <ion-col size="4" class="stat-col">
-            <div class="stat-number">{{ profileData.devices }}</div>
+            <div class="stat-number">{{ profileData?.devices || 0 }}</div>
             <div class="stat-label">Perangkat</div>
           </ion-col>
           <ion-col size="4" class="stat-col">
-            <div class="stat-number">{{ profileData.activeDays }}</div>
+            <div class="stat-number">{{ profileData?.activeDays || 0 }}</div>
             <div class="stat-label">Hari Aktif</div>
           </ion-col>
           <ion-col size="4" class="stat-col">
-            <div class="stat-number">{{ profileData.dataUsage }}</div>
+            <div class="stat-number">{{ profileData?.dataUsage || 0 }}</div>
             <div class="stat-label">Data</div>
           </ion-col>
         </ion-row>
@@ -125,9 +125,9 @@
           expand="block" 
           color="danger" 
           (click)="handleLogout()"
-          [disabled]="loading">
-          <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-          <span *ngIf="!loading">
+          [disabled]="isLoading">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <span *ngIf="!isLoading">
             <ion-icon name="log-out-outline" slot="start"></ion-icon>
             Keluar dari Akun
           </span>
@@ -139,37 +139,39 @@
     <div *ngIf="currentSection === 'editProfile'" class="edit-section">
       <ion-card>
         <ion-card-content>
-          <ion-list>
-            <ion-item>
-              <ion-label position="stacked">Nama Lengkap</ion-label>
-              <ion-input 
-                [(ngModel)]="editForm.displayName"
-                placeholder="Masukkan nama lengkap"
-                type="text">
-              </ion-input>
-            </ion-item>
+          <form [formGroup]="editForm" (ngSubmit)="handleEditProfile()">
+            <ion-list>
+              <ion-item>
+                <ion-label position="stacked">Nama Lengkap</ion-label>
+                <ion-input 
+                  formControlName="displayName"
+                  placeholder="Masukkan nama lengkap"
+                  type="text">
+                </ion-input>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label position="stacked">Email</ion-label>
+                <ion-input 
+                  [value]="user?.email || '-'"
+                  readonly
+                  color="medium">
+                </ion-input>
+                <ion-label class="input-note">Email tidak dapat diubah</ion-label>
+              </ion-item>
+            </ion-list>
             
-            <ion-item>
-              <ion-label position="stacked">Email</ion-label>
-              <ion-input 
-                [value]="user.email"
-                readonly
-                color="medium">
-              </ion-input>
-              <ion-label class="input-note">Email tidak dapat diubah</ion-label>
-            </ion-item>
-          </ion-list>
-          
-          <ion-button 
-            expand="block" 
-            (click)="handleEditProfile()"
-            [disabled]="loading || !editForm.displayName.trim()">
-            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-            <span *ngIf="!loading">
-              <ion-icon name="save-outline" slot="start"></ion-icon>
-              Simpan Perubahan
-            </span>
-          </ion-button>
+            <ion-button 
+              expand="block" 
+              type="submit"
+              [disabled]="isLoading || editForm.invalid">
+              <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+              <span *ngIf="!isLoading">
+                <ion-icon name="save-outline" slot="start"></ion-icon>
+                Simpan Perubahan
+              </span>
+            </ion-button>
+          </form>
         </ion-card-content>
       </ion-card>
     </div>
@@ -181,78 +183,63 @@
           <ion-card-title>Ubah Password</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <ion-list>
-            <ion-item>
-              <ion-label position="stacked">Password Saat Ini</ion-label>
-              <ion-input 
-                [(ngModel)]="passwordForm.currentPassword"
-                placeholder="Masukkan password saat ini"
-                [type]="showPassword ? 'text' : 'password'">
-              </ion-input>
-              <ion-button 
-                slot="end" 
-                fill="clear" 
-                (click)="togglePasswordVisibility()">
-                <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-              </ion-button>
-            </ion-item>
+          <form [formGroup]="passwordForm" (ngSubmit)="handleChangePassword()">
+            <ion-list>
+              <ion-item>
+                <ion-label position="stacked">Password Saat Ini</ion-label>
+                <ion-input 
+                  formControlName="currentPassword"
+                  placeholder="Masukkan password saat ini"
+                  [type]="showPassword ? 'text' : 'password'">
+                </ion-input>
+                <ion-button 
+                  slot="end" 
+                  fill="clear" 
+                  (click)="togglePasswordVisibility()">
+                  <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label position="stacked">Password Baru</ion-label>
+                <ion-input 
+                  formControlName="newPassword"
+                  placeholder="Minimal 6 karakter"
+                  type="password">
+                </ion-input>
+              </ion-item>
+              
+              <ion-item>
+                <ion-label position="stacked">Konfirmasi Password Baru</ion-label>
+                <ion-input 
+                  formControlName="confirmPassword"
+                  placeholder="Ulangi password baru"
+                  [type]="showConfirmPassword ? 'text' : 'password'">
+                </ion-input>
+                <ion-button 
+                  slot="end" 
+                  fill="clear" 
+                  (click)="toggleConfirmPasswordVisibility()">
+                  <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ion-list>
             
-            <ion-item>
-              <ion-label position="stacked">Password Baru</ion-label>
-              <ion-input 
-                [(ngModel)]="passwordForm.newPassword"
-                placeholder="Minimal 6 karakter"
-                type="password">
-              </ion-input>
-            </ion-item>
-            
-            <ion-item>
-              <ion-label position="stacked">Konfirmasi Password Baru</ion-label>
-              <ion-input 
-                [(ngModel)]="passwordForm.confirmPassword"
-                placeholder="Ulangi password baru"
-                [type]="showConfirmPassword ? 'text' : 'password'">
-              </ion-input>
-              <ion-button 
-                slot="end" 
-                fill="clear" 
-                (click)="toggleConfirmPasswordVisibility()">
-                <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-              </ion-button>
-            </ion-item>
-          </ion-list>
-          
-          <ion-button 
-            expand="block" 
-            color="success"
-            (click)="handleChangePassword()"
-            [disabled]="loading || !passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword">
-            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-            <span *ngIf="!loading">
-              <ion-icon name="save-outline" slot="start"></ion-icon>
-              Ubah Password
-            </span>
-          </ion-button>
+            <ion-button 
+              expand="block" 
+              color="success"
+              type="submit"
+              [disabled]="isLoading || passwordForm.invalid">
+              <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+              <span *ngIf="!isLoading">
+                <ion-icon name="save-outline" slot="start"></ion-icon>
+                Ubah Password
+              </span>
+            </ion-button>
+          </form>
         </ion-card-content>
       </ion-card>
     </div>
-
-    <!-- Firebase Integration Guide -->
-    <ion-card class="integration-guide">
-      <ion-card-header>
-        <ion-card-title>🔧 Panduan Integrasi Firebase</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="guide-steps">
-          <p><strong>1.</strong> <code>npm install @angular/fire firebase</code></p>
-          <p><strong>2.</strong> Buat project di console.firebase.google.com</p>
-          <p><strong>3.</strong> Aktifkan Authentication (Email/Password)</p>
-          <p><strong>4.</strong> Buat database Firestore</p>
-          <p><strong>5.</strong> Salin config dan update environment</p>
-          <p><strong>6.</strong> Import AngularFireModule di main.ts</p>
-        </div>
-      </ion-card-content>
-    </ion-card>
   </div>
 
   <!-- Toast Messages -->

@@ -206,18 +206,13 @@ p, span, div {
     }
   }
   
-  // COMMENT atau HAPUS styles yang tidak digunakan untuk Ionic app
-  /*
-  .status-bar {
-    // ... (comment semua styles desktop/mobile container)
-  }
-  
-  .main-content {
-    // ... (comment semua styles desktop/mobile container)  
-  }
-  
-  // dst... comment semua styles yang tidak relevan dengan Ionic
-  */
+  #map {
+width: 100%;
+height: 100%;
+position: absolute;
+top: 0;
+left: 0;
+}
   
   // Responsive - Sesuaikan dengan Ionic
   @media (max-width: 768px) {

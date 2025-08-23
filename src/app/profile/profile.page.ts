@@ -1,328 +1,105 @@
-// profile.page.ts
-import { Component, OnInit, inject, Injectable } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonTitle, 
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonButton,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonInput,
-  IonList,
-  IonAvatar,
-  IonChip,
-  IonBadge,
-  IonSpinner,
-  IonToast,
-  IonAlert,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonSegment,
-  IonSegmentButton
-} from '@ionic/angular/standalone';
-import { AlertButton } from '@ionic/angular'; // penting untuk alertButtons
 
-import { addIcons } from 'ionicons';
-import { 
-  personOutline, 
-  lockClosedOutline, 
-  chatbubbleOutline,
-  informationCircleOutline,
-  logOutOutline,
-  chevronForwardOutline,
-  arrowBackOutline,
-  saveOutline,
-  eyeOutline,
-  eyeOffOutline
-} from 'ionicons/icons';
-
-// ====== Interfaces ======
-interface User {
-  uid: string;
-  displayName: string | null;
-  email: string | null;
-  photoURL: string | null;
-}
-
-interface ProfileData {
-  devices: number;
-  activeDays: number;
-  dataUsage: string;
-  displayName?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-// ====== FirebaseService (mock) ======
-@Injectable({
-  providedIn: 'root'
-})
-export class FirebaseService {
-  private userSubject = new BehaviorSubject<User | null>(null);
-  private profileSubject = new BehaviorSubject<ProfileData | null>(null);
-
-  private mockUser: User = {
-    uid: 'user123',
-    displayName: 'John Smith',
-    email: 'john.smith@email.com',
-    photoURL: null
-  };
-
-  private mockProfile: ProfileData = {
-    devices: 3,
-    activeDays: 156,
-    dataUsage: '2.3GB',
-    displayName: 'John Smith',
-    createdAt: '2024-01-15T10:00:00Z'
-  };
-
-  constructor() {
-    // Simulasi auto-login
-    setTimeout(() => {
-      this.userSubject.next(this.mockUser);
-      this.profileSubject.next(this.mockProfile);
-    }, 1000);
-  }
-
-  get user$(): Observable<User | null> {
-    return this.userSubject.asObservable();
-  }
-
-  get profile$(): Observable<ProfileData | null> {
-    return this.profileSubject.asObservable();
-  }
-
-  get currentUser(): User | null {
-    return this.userSubject.value;
-  }
-
-  async signOut(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this.userSubject.next(null);
-        this.profileSubject.next(null);
-        resolve();
-      }, 1000);
-    });
-  }
-
-  async updateProfile(data: { displayName: string }): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const currentUser = this.userSubject.value;
-        const currentProfile = this.profileSubject.value;
-        
-        if (currentUser && currentProfile) {
-          const updatedUser = { ...currentUser, displayName: data.displayName };
-          const updatedProfile = { 
-            ...currentProfile, 
-            displayName: data.displayName,
-            updatedAt: new Date().toISOString()
-          };
-          this.userSubject.next(updatedUser);
-          this.profileSubject.next(updatedProfile);
-        }
-        resolve();
-      }, 1000);
-    });
-  }
-
-  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (currentPassword === 'wrongpassword') {
-          reject(new Error('Password saat ini salah'));
-        } else {
-          resolve();
-        }
-      }, 1500);
-    });
-  }
-
-  async loadProfileData(): Promise<ProfileData> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(this.mockProfile);
-      }, 500);
-    });
-  }
-}
-
-// ====== ProfilePage Component ======
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonButton,
-    IonIcon,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonList,
-    IonAvatar,
-    IonChip,
-    IonBadge,
-    IonSpinner,
-    IonToast,
-    IonAlert,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonSegment,
-    IonSegmentButton
-  ]
 })
 export class ProfilePage implements OnInit {
-  private firebaseService = inject(FirebaseService);
-  private router = inject(Router);
+  user: any = {
+    displayName: 'Pengguna',
+    email: 'user@example.com',
+    password: '123456', // dummy password
+  };
 
-  // State
-  user: User | null = null;
-  profileData: ProfileData | null = null;
+  profileData: any = {
+    devices: 0,
+    activeDays: 0,
+    dataUsage: 0,
+  };
+
   currentSection: 'main' | 'editProfile' | 'security' = 'main';
-  loading = false;
+
+  editForm: FormGroup;
+  passwordForm: FormGroup;
+
+  isLoading = false;
+  showToast = false;
+  toastMessage = '';
+  showAlert = false;
+  alertMessage = '';
+  alertButtons: any[] = ['OK'];
+
   showPassword = false;
   showConfirmPassword = false;
 
-  // Form data
-  editForm = { displayName: '' };
-  passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
-
-  // Toast + Alert
-  showToast = false;
-  showAlert = false;
-  toastMessage = '';
-  alertMessage = '';
-  alertButtons: AlertButton[] = [{ text: 'OK', role: 'cancel' }];
-
-  constructor() {
-    addIcons({
-      personOutline,
-      lockClosedOutline,
-      chatbubbleOutline,
-      informationCircleOutline,
-      logOutOutline,
-      chevronForwardOutline,
-      arrowBackOutline,
-      saveOutline,
-      eyeOutline,
-      eyeOffOutline
+  constructor(private fb: FormBuilder, private router: Router) {
+    // Form edit profil
+    this.editForm = this.fb.group({
+      displayName: ['', [Validators.required, Validators.minLength(2)]],
     });
+
+    // Form ubah password
+    this.passwordForm = this.fb.group(
+      {
+        currentPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   ngOnInit() {
-    this.firebaseService.user$.subscribe(user => {
-      this.user = user;
-      if (user) this.editForm.displayName = user.displayName || '';
+    // Kalau ada data user tersimpan, pakai itu
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      this.user = JSON.parse(savedUser);
+    }
+
+    this.editForm.patchValue({
+      displayName: this.user.displayName || 'Pengguna'
     });
-
-    this.firebaseService.profile$.subscribe(profile => {
-      this.profileData = profile;
-    });
-  }
-
-  getInitials(name: string | null): string {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
-  }
-
-  async handleLogout() {
-    this.showAlert = true;
-    this.alertMessage = 'Apakah Anda yakin ingin keluar dari akun?';
-    this.alertButtons = [
-      { text: 'Batal', role: 'cancel' },
-      {
-        text: 'Keluar',
-        role: 'confirm',
-        handler: async () => {
-          this.loading = true;
-          try {
-            await this.firebaseService.signOut();
-            this.showToastMessage('Berhasil keluar dari akun');
-            await this.router.navigate(['/home']);
-          } catch (error: any) {
-            this.showToastMessage('Gagal keluar: ' + error.message);
-          } finally {
-            this.loading = false;
-            this.showAlert = false;
-          }
-        }
-      }
-    ];
-  }
-
-  async handleEditProfile() {
-    if (!this.editForm.displayName.trim()) {
-      this.showToastMessage('Nama tidak boleh kosong');
-      return;
-    }
-    this.loading = true;
-    try {
-      await this.firebaseService.updateProfile({ displayName: this.editForm.displayName });
-      this.showToastMessage('Profil berhasil diperbarui');
-      this.currentSection = 'main';
-    } catch (error: any) {
-      this.showToastMessage('Error: ' + error.message);
-    } finally {
-      this.loading = false;
-    }
-  }
-
-  async handleChangePassword() {
-    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
-      this.showToastMessage('Password baru tidak cocok');
-      return;
-    }
-    if (this.passwordForm.newPassword.length < 6) {
-      this.showToastMessage('Password minimal 6 karakter');
-      return;
-    }
-    this.loading = true;
-    try {
-      await this.firebaseService.updatePassword(
-        this.passwordForm.currentPassword,
-        this.passwordForm.newPassword
-      );
-      this.showToastMessage('Password berhasil diubah');
-      this.passwordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
-      this.currentSection = 'main';
-    } catch (error: any) {
-      this.showToastMessage('Error: ' + error.message);
-    } finally {
-      this.loading = false;
-    }
   }
 
   showSection(section: 'main' | 'editProfile' | 'security') {
     this.currentSection = section;
   }
 
-  showToastMessage(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
+  getInitials(name: string) {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  // ----- Edit Profile -----
+  handleEditProfile() {
+    if (this.editForm.invalid) return;
+    this.isLoading = true;
+
+    setTimeout(() => {
+      this.isLoading = false;
+      this.user.displayName = this.editForm.value.displayName;
+
+      // Simpan ke localStorage
+      localStorage.setItem('user', JSON.stringify(this.user));
+
+      this.showToastMessage('Profil berhasil diperbarui.');
+      this.showSection('main');
+    }, 1000);
+  }
+
+  // ----- Password -----
+  passwordMatchValidator(form: FormGroup) {
+    return form.get('newPassword')?.value === form.get('confirmPassword')?.value
+      ? null
+      : { passwordMismatch: true };
   }
 
   togglePasswordVisibility() {
@@ -333,11 +110,56 @@ export class ProfilePage implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  handleChangePassword() {
+    if (this.passwordForm.invalid) return;
+    this.isLoading = true;
+
+    setTimeout(() => {
+      this.isLoading = false;
+
+      // Cek password saat ini (mock check)
+      if (this.passwordForm.value.currentPassword !== this.user.password) {
+        this.showAlertMessage('Password saat ini salah.');
+        return;
+      }
+
+      // Update password user
+      this.user.password = this.passwordForm.value.newPassword;
+      localStorage.setItem('user', JSON.stringify(this.user));
+
+      this.showToastMessage('Password berhasil diubah.');
+      this.passwordForm.reset();
+      this.showSection('main');
+    }, 1000);
+  }
+
+  // ----- Support -----
   handleSupportChat() {
-    this.showToastMessage('Fitur chat support akan segera hadir!');
+    this.showAlertMessage('Hubungi support di: support@seismosens.com');
   }
 
   handleAboutInfo() {
-    this.showToastMessage('SeismoSens v2.1.0 - Sistem Monitoring Seismik Terdepan');
+    this.showAlertMessage('SeismoSens v2.1.0\nTim Pengembang 2025');
+  }
+
+  // ----- Logout -----
+  handleLogout() {
+    this.isLoading = true;
+    setTimeout(() => {
+      this.isLoading = false;
+      localStorage.removeItem('user');
+      this.router.navigateByUrl('/dashboard/home', { replaceUrl: true });
+    }, 1000);
+  }
+
+  // ----- Helper Toast & Alert -----
+  private showToastMessage(message: string) {
+    this.toastMessage = message;
+    this.showToast = true;
+  }
+
+  private showAlertMessage(message: string) {
+    this.alertMessage = message;
+    this.showAlert = true;
   }
 }

@@ -8,17 +8,17 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 50px 0 40px;
   color: white;
-  
+
   .header-content {
     padding: 0 20px;
-    
+
     h1 {
       font-family: 'Inter', sans-serif;
       font-size: 28px;
       font-weight: 700;
       margin: 0 0 8px 0;
     }
-    
+
     p {
       font-family: 'Inter', sans-serif;
       font-size: 16px;
@@ -29,7 +29,7 @@
   }
 }
 
-// PERBAIKAN MAP SECTION - With card wrapper
+// MAP SECTION - Card wrapper
 .map-section {
   width: 100%;
   padding: 16px;
@@ -43,7 +43,7 @@
   box-shadow: var(--ion-box-shadow);
   width: 300px;
   height: 300px;
-  
+
   ion-card-content {
     padding: 0;
     margin: 0;
@@ -71,52 +71,52 @@
   background: #f0f0f0;
 }
 
-// Map legend - completely solid white background
+// Map legend - TangramJS style
 .map-legend {
   position: absolute;
   top: 15px;
   left: 15px;
-  background: #ffffff !important; // Force solid white background
-  border: 1px solid rgba(0, 0, 0, 0.1); // Add subtle border
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 12px;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15); // Stronger shadow
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   font-size: 10px;
   z-index: 1000;
-  backdrop-filter: none !important; // Remove any backdrop filter
-  opacity: 1 !important; // Ensure full opacity
+  backdrop-filter: none !important;
+  opacity: 1 !important;
 }
 
 .legend-title {
-font-weight: 600;
-margin-bottom: 6px;
-font-size: 11px;
-color: #333333 !important; // Force dark text color
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: #333333 !important;
 }
 
 .legend-item {
-display: flex;
-align-items: center;
-margin-bottom: 4px;
-font-size: 10px;
-color: #666666 !important; // Force medium dark text color
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: #666666 !important;
 
-&:last-of-type {
-  margin-bottom: 0;
-}
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 }
 
 .legend-dot {
-width: 8px;
-height: 8px;
-border-radius: 50%;
-margin-right: 5px;
-flex-shrink: 0;
-border: 1px solid rgba(0, 0, 0, 0.2); // Darker border for better contrast
-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-// Map controls - adjusted for smaller map
+// Map controls - TangramJS
 .map-controls {
   position: absolute;
   top: 15px;
@@ -136,15 +136,15 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   
   backdrop-filter: blur(10px);
   cursor: pointer;
-  
+
   ion-icon {
     font-size: 14px;
   }
-  
+
   &:hover {
     --background: rgba(255, 255, 255, 1);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -155,7 +155,7 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin: 0 16px 16px;
   border-radius: 16px;
   box-shadow: var(--ion-box-shadow);
-  
+
   ion-card-content {
     padding: 16px;
   }
@@ -179,7 +179,6 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   --padding-end: 12px;
   --padding-top: 6px;
   --padding-bottom: 6px;
-  
   margin: 0;
   font-size: 12px;
   font-weight: 500;
@@ -216,7 +215,7 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin: 0;
   border-radius: 12px;
   box-shadow: var(--ion-box-shadow);
-  
+
   ion-card-content {
     padding: 16px;
     text-align: center;
@@ -247,13 +246,13 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-weight: 500;
 }
 
-// Location cards
-.location-card {
+// Location & Device cards
+.location-card,
+.device-card {
   margin: 0 0 12px 0;
   border-radius: 16px;
   box-shadow: var(--ion-box-shadow);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 4px solid var(--ion-color-medium);
   overflow: hidden;
 
   &:hover {
@@ -261,31 +260,21 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   }
 
-  &.normal {
-    border-left-color: var(--ion-color-success);
-  }
-
-  &.warning {
-    border-left-color: var(--ion-color-warning);
-  }
-
-  &.offline {
-    border-left-color: var(--ion-color-danger);
-  }
-  
   ion-card-content {
     padding: 16px;
   }
 }
 
-.location-header {
+.location-header,
+.device-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 16px;
 }
 
-.location-info {
+.location-info,
+.device-info {
   flex: 1;
   min-width: 0;
 
@@ -304,7 +293,8 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 }
 
-.location-status {
+.location-status,
+.device-status {
   flex-shrink: 0;
   padding: 6px 12px;
   border-radius: 12px;
@@ -325,63 +315,6 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     background: rgba(var(--ion-color-danger-rgb), 0.1);
     color: var(--ion-color-danger);
   }
-}
-
-// Device cards (user devices)
-.device-card {
-  margin: 0 0 12px 0;
-  border-radius: 16px;
-  box-shadow: var(--ion-box-shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  &.user-device {
-    border-left: 4px solid var(--ion-color-primary);
-  }
-  
-  ion-card-content {
-    padding: 16px;
-  }
-}
-
-.device-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  gap: 16px;
-}
-
-.device-info {
-  flex: 1;
-  min-width: 0;
-
-  h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ion-color-dark);
-    margin: 0 0 4px 0;
-  }
-
-  p {
-    font-size: 13px;
-    color: var(--ion-color-medium);
-    margin: 0;
-    line-height: 1.4;
-  }
-}
-
-.device-status {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
 
   &.user {
     background: rgba(var(--ion-color-primary-rgb), 0.1);
@@ -425,23 +358,23 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   margin-top: 16px;
 }
 
-// Custom marker styles (global)
+// TangramJS custom marker styles
 :global(.custom-marker) {
   background: transparent !important;
   border: none !important;
 }
 
-// Popup styles (global)
+// TangramJS popup styles
 :global(.sensor-popup) {
   min-width: 200px;
-  
+
   h4 {
     margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
     color: var(--ion-color-dark);
   }
-  
+
   p {
     margin: 0 0 12px 0;
     font-size: 14px;
@@ -449,28 +382,29 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 }
 
+// Status badge
 :global(.status-badge) {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 500;
-  
+
   &.normal {
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
   }
-  
+
   &.warning {
     background: rgba(245, 158, 11, 0.1);
     color: #f59e0b;
   }
-  
+
   &.offline {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
   }
-  
+
   &.user {
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
@@ -482,50 +416,41 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   .header-section {
     padding: 12px 0;
   }
-  
+
   .header-content {
     padding: 0 16px;
   }
-  
-  .welcome-title {
-    font-size: 18px;
-  }
-  
-  .welcome-subtitle {
-    font-size: 13px;
-  }
-  
+
   .map-section {
     padding: 16px 12px;
-    box-sizing: border-box;
   }
-  
+
   .map-container {
     width: 100%;
     margin: 0;
   }
-  
+
   #map {
     height: 280px;
     min-height: 280px;
     width: 100% !important;
   }
-  
+
   .map-legend {
     top: 10px;
     left: 10px;
     padding: 12px;
     max-width: 160px;
   }
-  
+
   .legend-title {
     font-size: 13px;
   }
-  
+
   .legend-item {
     font-size: 11px;
   }
-  
+
   .map-controls {
     top: 10px;
     right: 10px;
@@ -557,10 +482,10 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 }
 
-// Dark mode support (Ionic 7)
+// Dark mode support
 @media (prefers-color-scheme: dark) {
   .map-legend {
-    background: #ffffff !important; // Force white even in dark mode
+    background: #ffffff !important;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25) !important;
   }
@@ -569,52 +494,4 @@ box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     --background: rgba(var(--ion-color-step-100-rgb), 0.9);
     --color: var(--ion-color-step-800);
   }
-}
-
-// Leaflet popup styling override
-:global(.leaflet-popup-content-wrapper) {
-  border-radius: 12px !important;
-  box-shadow: var(--ion-box-shadow) !important;
-  background: var(--ion-background-color) !important;
-  color: var(--ion-text-color) !important;
-}
-
-:global(.leaflet-popup-tip) {
-  background: var(--ion-background-color) !important;
-}
-
-// Pastikan leaflet container tampil penuh - fix untuk square container
-:global(.leaflet-container) {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 16px;
-  box-sizing: border-box !important;
-  background: #f0f0f0 !important;
-  position: relative !important;
-}
-
-// Fix leaflet pane positioning
-:global(.leaflet-map-pane) {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-// Ensure tiles render properly in square container
-:global(.leaflet-tile-pane) {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-:global(.leaflet-tile) {
-  max-width: none !important;
-  max-height: none !important;
-}
-
-// Fix leaflet controls
-:global(.leaflet-control-container) {
-  pointer-events: none;
-}
-
-:global(.leaflet-control) {
-  pointer-events: auto;
 }

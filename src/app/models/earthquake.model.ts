@@ -5,7 +5,6 @@ export interface User {
   photoURL?: string;
   emailVerified: boolean;
   createdAt: Date;
-  lastLoginAt: Date;
   deviceCount: number;
   detectionCount: number;
   alertsSent: number;

@@ -1,36 +1,21 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
-// Guards
+// Guard (opsional, bisa dipakai kalau masih butuh kontrol akses)
 import { AuthGuard } from './guards/auth.guards';
-import { NoAuthGuard } from './guards/no-auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard/home',
     pathMatch: 'full'
-  },
-
-  // ✅ LOGIN
-  {
-    path: 'login',
-    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage),
-    canActivate: [NoAuthGuard]
-  },
-
-  // ✅ REGISTER
-  {
-    path: 'register',
-    loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage),
-    canActivate: [NoAuthGuard]
   },
 
   // ✅ DASHBOARD (bottom nav container)
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard], // kalau tidak perlu guard, hapus saja baris ini
     children: [
       {
         path: 'home',
@@ -60,10 +45,10 @@ const routes: Routes = [
     ]
   },
 
-  // ✅ fallback jika route tidak ada
+  // ✅ fallback kalau route tidak ada
   {
     path: '**',
-    redirectTo: 'login'
+    redirectTo: 'dashboard/home'
   }
 ];
 
