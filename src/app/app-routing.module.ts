@@ -1,54 +1,31 @@
+// app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-
-// Guard (opsional, bisa dipakai kalau masih butuh kontrol akses)
-import { AuthGuard } from './guards/auth.guards';
+import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard/home',
+    redirectTo: 'onboarding',
     pathMatch: 'full'
   },
-
-  // ✅ DASHBOARD (bottom nav container)
+  {
+    path: 'onboarding',
+    loadChildren: () => import('./onboarding/onboarding.module').then(m => m.OnboardingPageModule)
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+  },
   {
     path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard.page').then(m => m.DashboardPage),
-    canActivate: [AuthGuard], // kalau tidak perlu guard, hapus saja baris ini
-    children: [
-      {
-        path: 'home',
-        loadComponent: () => import('./home/home.page').then(m => m.HomePage)
-      },
-      {
-        path: 'devices',
-        loadComponent: () => import('./devices/devices.page').then(m => m.DevicesPage)
-      },
-      {
-        path: 'map',
-        loadComponent: () => import('./map/map.page').then(m => m.MapPage)
-      },
-      {
-        path: 'settings',
-        loadComponent: () => import('./settings/settings.page').then(m => m.SettingsPage)
-      },
-      {
-        path: 'profile',
-        loadComponent: () => import('./profile/profile.page').then(m => m.ProfilePage)
-      },
-      {
-        path: '',
-        redirectTo: 'home',
-        pathMatch: 'full'
-      }
-    ]
+    loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard]
   },
-
-  // ✅ fallback kalau route tidak ada
   {
     path: '**',
-    redirectTo: 'dashboard/home'
+    redirectTo: 'onboarding',
+    pathMatch: 'full'
   }
 ];
 
@@ -58,4 +35,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
