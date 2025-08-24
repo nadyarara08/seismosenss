@@ -1,0 +1,64 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Masuk</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="logo-container">
+    <img src="assets/icon/logo.png" alt="Logo" class="logo">
+  </div>
+
+  <form [formGroup]="credentials" (ngSubmit)="login()">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" formControlName="email" required></ion-input>
+      <ion-note *ngIf="email?.errors?.['required'] && (email?.dirty || email?.touched)" color="danger">
+        Email harus diisi
+      </ion-note>
+      <ion-note *ngIf="email?.errors?.['email'] && (email?.dirty || email?.touched)" color="danger">
+        Format email tidak valid
+      </ion-note>
+    </ion-item>
+    
+    <ion-item>
+      <ion-label position="floating">Password</ion-label>
+      <ion-input type="password" formControlName="password" required></ion-input>
+      <ion-note *ngIf="password?.errors?.['required'] && (password?.dirty || password?.touched)" color="danger">
+        Password harus diisi
+      </ion-note>
+      <ion-note *ngIf="password?.errors?.['minlength']" color="danger">
+        Password minimal 6 karakter
+      </ion-note>
+    </ion-item>
+
+    <div class="forgot-password">
+      <a routerLink="/auth/forgot-password">Lupa Password?</a>
+    </div>
+    
+    <ion-button 
+      expand="block" 
+      type="submit" 
+      class="ion-margin-top" 
+      [disabled]="!credentials.valid"
+      [class.ion-hide]="loading">
+      Masuk
+    </ion-button>
+
+    <ion-button 
+      expand="block" 
+      color="medium" 
+      class="ion-margin-top" 
+      *ngIf="loading"
+      disabled>
+      <ion-spinner name="crescent"></ion-spinner>
+    </ion-button>
+  </form>
+  
+  <div class="register-link">
+    Belum punya akun? <a routerLink="/auth/register">Daftar</a>
+  </div>
+</ion-content>

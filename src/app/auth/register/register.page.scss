@@ -1,0 +1,51 @@
+ion-content {
+  --background: #f5f5f5;
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+
+    .logo {
+      width: 150px;
+      height: auto;
+    }
+  }
+
+  form {
+    ion-item {
+      --background: transparent;
+      --border-color: var(--ion-color-medium);
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+
+      ion-label {
+        color: var(--ion-color-medium);
+      }
+
+      ion-input {
+        --padding-start: 0;
+      }
+    }
+
+    ion-button {
+      --border-radius: 8px;
+      height: 48px;
+      font-weight: 600;
+      margin-top: 2rem;
+    }
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--ion-color-medium);
+
+    a {
+      color: var(--ion-color-primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+  }
+}

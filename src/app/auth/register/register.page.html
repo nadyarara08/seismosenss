@@ -24,22 +24,16 @@
     </ion-item>
     
     <ion-item>
-      <ion-label position="floating">Kata Sandi</ion-label>
+      <ion-label position="floating">Password</ion-label>
       <ion-input type="password" formControlName="password" required></ion-input>
     </ion-item>
-
-    <ion-note class="ion-text-center" color="medium">Minimal 6 karakter</ion-note>
-
-    <ion-button 
-      expand="block" 
-      type="submit" 
-      class="ion-margin-top"
-      [disabled]="!credentials.valid">
+    
+    <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="!credentials.valid">
       Daftar
     </ion-button>
   </form>
-
+  
   <div class="login-link">
-    <p>Sudah punya akun? <a routerLink="/login">Masuk disini</a></p>
+    Sudah punya akun? <a routerLink="/login">Masuk</a>
   </div>
 </ion-content>
