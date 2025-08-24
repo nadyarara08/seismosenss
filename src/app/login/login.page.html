@@ -1,0 +1,85 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <h1>Selamat Datang Kembali</h1>
+    <p class="subtitle">Silakan masuk untuk melanjutkan</p>
+
+    <form [formGroup]="credentials" (ngSubmit)="login()">
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" formControlName="email" required></ion-input>
+      </ion-item>
+      <ion-note *ngIf="email?.invalid && (email?.dirty || email?.touched)" color="danger">
+        <div *ngIf="email?.errors?.['required']">Email harus diisi</div>
+        <div *ngIf="email?.errors?.['email']">Format email tidak valid</div>
+      </ion-note>
+
+      <ion-item class="ion-margin-top">
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" formControlName="password" required></ion-input>
+      </ion-item>
+      <ion-note *ngIf="password?.invalid && (password?.dirty || password?.touched)" color="danger">
+        <div *ngIf="password?.errors?.['required']">Password harus diisi</div>
+        <div *ngIf="password?.errors?.['minlength']">Password minimal 6 karakter</div>
+      </ion-note>
+
+      <ion-button 
+        expand="block" 
+        type="submit" 
+        class="ion-margin-vertical"
+        [disabled]="credentials.invalid">
+        Masuk
+      </ion-button>
+    </form>
+
+    <div class="ion-text-center ion-margin-vertical">
+      <p>Belum punya akun? <a routerLink="/register">Daftar</a></p>
+    </div>
+  </div>
+</ion-content>
+
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle {
+    color: var(--ion-color-medium);
+    margin-top: 0;
+    margin-bottom: 32px;
+  }
+  
+  ion-item {
+    --background: var(--ion-color-light);
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  
+  ion-button {
+    margin-top: 32px;
+  }
+  
+  ion-note {
+    display: block;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+</style>

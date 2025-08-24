@@ -1,0 +1,54 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="onboarding-container">
+    <div class="header">
+      <ion-img src="assets/icon/logo.png" class="logo"></ion-img>
+      <ion-text color="primary">
+        <h1 class="title">Selamat Datang di SeismoSens</h1>
+      </ion-text>
+      <ion-text color="medium" class="subtitle">
+        <p>Pantau dan dapatkan peringatan dini gempa bumi di sekitar Anda</p>
+      </ion-text>
+    </div>
+
+    <div class="features">
+      <div class="feature-item">
+        <div class="icon-container">
+          <ion-icon name="notifications-outline" class="feature-icon"></ion-icon>
+        </div>
+        <ion-text>
+          <h3>Notifikasi Real-time</h3>
+          <p>Dapatkan pemberitahuan langsung saat terjadi gempa</p>
+        </ion-text>
+      </div>
+
+      <div class="feature-item">
+        <div class="icon-container">
+          <ion-icon name="location-outline" class="feature-icon"></ion-icon>
+        </div>
+        <ion-text>
+          <h3>Lokasi Akurat</h3>
+          <p>Pantau lokasi gempa dengan akurat di peta</p>
+        </ion-text>
+      </div>
+
+      <div class="feature-item">
+        <div class="icon-container">
+          <ion-icon name="shield-checkmark-outline" class="feature-icon"></ion-icon>
+        </div>
+        <ion-text>
+          <h3>Panduan Darurat</h3>
+          <p>Akses panduan keselamatan saat terjadi gempa</p>
+        </ion-text>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <ion-button expand="block" class="btn-primary" (click)="navigateTo('register')">
+        Daftar Sekarang
+      </ion-button>
+      <ion-button expand="block" fill="clear" class="btn-secondary" (click)="navigateTo('login')">
+        Masuk
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

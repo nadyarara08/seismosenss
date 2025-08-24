@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-searchbar 
+      placeholder="Search users..."
+      [(ngModel)]="searchTerm"
+      (ionChange)="filterUsers($event)"
+      animated>
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Loading State -->
+  <div *ngIf="!(users$ | async)" class="ion-text-center ion-padding">
+    <ion-spinner></ion-spinner>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Users List -->
+  <ion-list *ngIf="(users$ | async) as users">
+    <!-- Empty State -->
+    <ion-item *ngIf="filteredUsers.length === 0" lines="none" class="ion-text-center">
+      <ion-label color="medium">
+        <p>No users found</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Users ({{ filteredUsers.length }})</ion-label>
+      </ion-item-divider>
+
+      <ion-item-sliding *ngFor="let user of filteredUsers">
+        <ion-item>
+          <ion-avatar slot="start" *ngIf="user.photoURL">
+            <img [src]="user.photoURL" [alt]="user.displayName || 'User'">
+          </ion-avatar>
+          <ion-avatar slot="start" *ngIf="!user.photoURL">
+            <ion-icon name="person-circle" size="large"></ion-icon>
+          </ion-avatar>
+          
+          <ion-label>
+            <h2>{{ user.displayName || 'No name' }}</h2>
+            <p>{{ user.email }}</p>
+            <p>
+              <ion-badge [color]="getRoleBadgeColor(user.role)">
+                {{ user.role || 'unknown' | titlecase }}
+              </ion-badge>
+              <ion-note class="ion-margin-start" *ngIf="user.lastLogin">
+                Last login: {{ user.lastLogin | date:'medium' }}
+              </ion-note>
+            </p>
+          </ion-label>
+
+          <ion-note slot="end" *ngIf="user.createdAt">
+            <small>Joined: {{ user.createdAt | date:'shortDate' }}</small>
+          </ion-note>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="updateUserRole(user, 'admin')" [disabled]="user.role === 'admin'">
+            <ion-icon slot="icon-only" name="shield-checkmark"></ion-icon>
+            Make Admin
+          </ion-item-option>
+          <ion-item-option color="secondary" (click)="updateUserRole(user, 'user')" [disabled]="user.role === 'user'">
+            <ion-icon slot="icon-only" name="person"></ion-icon>
+            Make User
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="deleteUser(user)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+            Delete
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-item-group>
+  </ion-list>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="loadUsers()">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
