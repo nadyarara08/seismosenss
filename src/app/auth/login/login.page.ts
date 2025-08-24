@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,75 +10,64 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  credentials: FormGroup<{
-    email: FormControl<string | null>;
-    password: FormControl<string | null>;
-  }>;
-  loading = false;
+  loginForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
+  });
+  
+  isLoading = false;
 
   constructor(
-    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
     private authService: AuthService,
-    private alertController: AlertController,
     private router: Router,
-    private loadingController: LoadingController
-  ) {
-    this.credentials = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-  }
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController
+  ) {}
 
   ngOnInit() {}
 
   get email() {
-    return this.credentials.get('email');
+    return this.loginForm.get('email');
   }
 
   get password() {
-    return this.credentials.get('password');
+    return this.loginForm.get('password');
   }
 
-  async login() {
-    if (this.credentials.invalid) {
+  async onSubmit() {
+    if (this.loginForm.invalid) {
       return;
     }
 
-    this.loading = true;
-    const loading = await this.loadingController.create({
-      message: 'Sedang masuk...',
-      spinner: 'crescent'
+    const loading = await this.loadingCtrl.create({
+      message: 'Logging in...'
     });
-    
+    await loading.present();
+
     try {
-      await loading.present();
       await this.authService.login(
-        this.credentials.value.email!,
-        this.credentials.value.password!
+        this.loginForm.value.email,
+        this.loginForm.value.password
       );
       
-      await loading.dismiss();
-      this.router.navigate(['/dashboard'], { replaceUrl: true });
-    } catch (error: any) {
-      await loading.dismiss();
-      this.loading = false;
+      this.router.navigateByUrl('/dashboard');
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      let errorMessage = 'Failed to log in. Please check your credentials.';
       
-      let errorMessage = 'Email atau password salah';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = 'Email atau password salah';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Terlalu banyak percobaan. Silakan coba lagi nanti';
-      } else if (error.message) {
-        errorMessage = error.message;
+      if (error instanceof Error) {
+        errorMessage = error.message || errorMessage;
       }
-
-      const alert = await this.alertController.create({
-        header: 'Gagal Masuk',
+      
+      const alert = await this.alertCtrl.create({
+        header: 'Login Failed',
         message: errorMessage,
         buttons: ['OK']
       });
-      
       await alert.present();
+    } finally {
+      await loading.dismiss();
     }
   }
 }
