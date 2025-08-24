@@ -1,6 +1,5 @@
-// Ionic 7 Variables
-:host {
-  --background: var(--ion-color-step-50);
+ion-content{
+  --background: #f5f5f5;
 }
 
 // Header Section
@@ -27,6 +26,9 @@
       opacity: 0.9;
     }
   }
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 // MAP SECTION - Card wrapper
@@ -72,27 +74,25 @@
   background: #f0f0f0;
 }
 
-// Map legend - TangramJS style
+// ✅ Map legend - Leaflet
 .map-legend {
   position: absolute;
   top: 15px;
   left: 15px;
-  background: #ffffff !important;
+  background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 12px;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   font-size: 10px;
   z-index: 1000;
-  backdrop-filter: none !important;
-  opacity: 1 !important;
 }
 
 .legend-title {
   font-weight: 600;
   margin-bottom: 6px;
   font-size: 11px;
-  color: #333333 !important;
+  color: #333333;
 }
 
 .legend-item {
@@ -100,7 +100,7 @@
   align-items: center;
   margin-bottom: 4px;
   font-size: 10px;
-  color: #666666 !important;
+  color: #666666;
 
   &:last-of-type {
     margin-bottom: 0;
@@ -117,7 +117,7 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-// Map controls - TangramJS
+// ✅ Map controls (Leaflet custom)
 .map-controls {
   position: absolute;
   top: 15px;
@@ -134,7 +134,7 @@
   --color: var(--ion-color-dark);
   --width: 28px;
   --height: 28px;
-  
+
   backdrop-filter: blur(10px);
   cursor: pointer;
 
@@ -359,32 +359,47 @@
   margin-top: 16px;
 }
 
-// TangramJS custom marker styles
-:global(.custom-marker) {
-  background: transparent !important;
-  border: none !important;
+// ✅ Leaflet popup & marker style (ganti dari TangramJS)
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 8px;
 }
 
-// TangramJS popup styles
-:global(.sensor-popup) {
-  min-width: 200px;
+.leaflet-popup-content {
+  margin: 0;
+  line-height: 1.4;
+}
 
-  h4 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--ion-color-dark);
-  }
+.leaflet-popup-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
 
-  p {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    color: var(--ion-color-medium);
-  }
+.leaflet-popup-content p {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: var(--ion-color-medium);
+}
+
+.custom-marker {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background: var(--ion-color-primary);
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
 
 // Status badge
-:global(.status-badge) {
+.status-badge {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 12px;
@@ -480,19 +495,5 @@
   .location-status,
   .device-status {
     align-self: flex-end;
-  }
-}
-
-// Dark mode support
-@media (prefers-color-scheme: dark) {
-  .map-legend {
-    background: #ffffff !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25) !important;
-  }
-
-  .map-control-btn {
-    --background: rgba(var(--ion-color-step-100-rgb), 0.9);
-    --color: var(--ion-color-step-800);
   }
 }

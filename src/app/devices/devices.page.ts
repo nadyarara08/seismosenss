@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonContent, IonCard, IonCardContent, IonBadge, IonIcon, IonFab, IonFabButton, AlertController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, warningOutline, closeCircle, add, ellipse, warning } from 'ionicons/icons';
@@ -19,7 +19,9 @@ interface Device {
   standalone: true,
   imports: [IonContent, IonCard, IonCardContent, IonBadge, IonIcon, IonFab, IonFabButton]
 })
-export class DevicesPage implements OnInit {
+export class DevicesPage {
+
+  // 🔹 Data perangkat statis (demo mode)
   devices: Device[] = [
     {
       id: 'SMS-USER-001',
@@ -51,9 +53,7 @@ export class DevicesPage implements OnInit {
     addIcons({ checkmarkCircle, warningOutline, closeCircle, add, ellipse, warning });
   }
 
-  ngOnInit() {
-  }
-
+  // 🔹 Detail perangkat saat diklik
   async onDeviceClick(device: Device) {
     const alert = await this.alertController.create({
       header: device.name,
@@ -70,16 +70,18 @@ export class DevicesPage implements OnInit {
     await alert.present();
   }
 
+  // 🔹 Tombol tambah perangkat
   async onAddDevice() {
     const alert = await this.alertController.create({
       header: 'Tambah Perangkat',
-      message: 'Fitur tambah perangkat dalam mode demo. Silakan hubungi administrator untuk menambah perangkat baru.',
+      message: 'Fitur tambah perangkat masih dalam mode demo. Hubungi admin untuk menambah perangkat baru.',
       buttons: ['OK']
     });
 
     await alert.present();
   }
 
+  // 🔹 Utility untuk status icon
   getStatusIcon(status: string): string {
     switch (status) {
       case 'online':
@@ -93,6 +95,7 @@ export class DevicesPage implements OnInit {
     }
   }
 
+  // 🔹 Utility untuk status text
   getStatusText(device: Device): string {
     switch (device.status) {
       case 'online':

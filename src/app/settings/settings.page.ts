@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { 
   IonContent, 
   IonHeader, 
@@ -12,7 +11,8 @@ import {
   IonButton,
   AlertController,
   ToastController,
-  ModalController
+  ModalController,
+  ActionSheetController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForward, logOutOutline, peopleOutline, codeSlashOutline } from 'ionicons/icons';
@@ -68,16 +68,15 @@ export class SettingsPage implements OnInit {
   constructor(
     private alertController: AlertController,
     private toastController: ToastController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private actionSheetController: ActionSheetController
   ) {
     addIcons({ chevronForward, logOutOutline, peopleOutline, codeSlashOutline });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   async showSetting(settingName: string) {
-    // Handle special cases
     if (settingName.toLowerCase().includes('about') || settingName.toLowerCase().includes('tentang')) {
       await this.showDeveloperList();
       return;
@@ -96,8 +95,8 @@ export class SettingsPage implements OnInit {
     const alert = await this.alertController.create({
       header: '👥 Tim Pengembang SeismoSens',
       message: this.developers.map(dev => 
-        `${dev.avatar} **${dev.name}**\n${dev.role}\n${dev.description}\n`
-      ).join('\n'),
+        `${dev.avatar} <b>${dev.name}</b><br>${dev.role}<br>${dev.description}<br><br>`
+      ).join(''),
       buttons: [
         {
           text: 'Tutup',
@@ -120,6 +119,47 @@ export class SettingsPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async showQuickActions() {
+    const actionSheet = await this.actionSheetController.create({
+      header: '⚡ Quick Actions',
+      buttons: [
+        {
+          text: '🔄 Refresh',
+          handler: () => {
+            this.presentToast('Data diperbarui!');
+          }
+        },
+        {
+          text: '📤 Export Data',
+          handler: () => {
+            this.presentToast('Data diexport!');
+          }
+        },
+        {
+          text: '⚙️ Pengaturan Umum',
+          handler: () => {
+            this.presentToast('Membuka pengaturan umum...');
+          }
+        },
+        {
+          text: '❌ Batal',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    await actionSheet.present();
+  }
+
+  private async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 
   scrollToTop() {

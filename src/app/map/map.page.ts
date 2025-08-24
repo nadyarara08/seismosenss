@@ -12,7 +12,8 @@ import {
   IonCard,
   IonCardContent,
   IonSelect,
-  IonSelectOption 
+  IonSelectOption,
+  AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, remove, locate, expand, checkmarkCircle, warning, closeCircle } from 'ionicons/icons';
@@ -97,7 +98,7 @@ export class MapPage implements OnDestroy {
     { id: 'KERATON', name: 'Keraton Surakarta', lat: -7.5711, lng: 110.8243, status: 'normal', category: 'Budaya', address: 'Jl. Brigjen Slamet Riyadi', distance: '1.8 km' }
   ];
 
-  constructor() {
+  constructor(private alertController: AlertController) {
     addIcons({ add, remove, locate, expand, checkmarkCircle, warning, closeCircle });
   }
 
@@ -119,28 +120,46 @@ export class MapPage implements OnDestroy {
     }
   }
 
-  private initializeMap() {
+  private async initializeMap() {
     const mapElement = document.getElementById('map');
     if (!mapElement) {
       console.error('Map element not found');
+
+      const alert = await this.alertController.create({
+        header: 'Gagal Memuat Peta',
+        message: 'Map tidak dapat dimuat. Periksa koneksi internet atau coba lagi nanti.',
+        buttons: ['OK']
+      });
+      await alert.present();
+
       return;
     }
 
-    // ⬇️ konfigurasi lengkap (zoom, scroll, controls aktif)
-    this.map = L.map(mapElement, {
-      center: [-7.5755, 110.8243],
-      zoom: 13,
-      zoomControl: true,
-      scrollWheelZoom: true
-    });
+    try {
+      this.map = L.map(mapElement, {
+        center: [-7.5755, 110.8243],
+        zoom: 13,
+        zoomControl: true,
+        scrollWheelZoom: true
+      });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(this.map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(this.map);
 
-    this.markers.addTo(this.map);
-    this.addSensorMarkers();
+      this.markers.addTo(this.map);
+      this.addSensorMarkers();
+    } catch (err) {
+      console.error('Map initialization failed', err);
+
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Terjadi kesalahan saat memuat peta.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 
   private addSensorMarkers() {
@@ -157,7 +176,6 @@ export class MapPage implements OnDestroy {
       const marker = L.marker([sensor.lat, sensor.lng], { icon })
         .bindPopup(`<b>${sensor.name}</b><br>${sensor.category || ''}<br>${sensor.address || ''}`);
 
-      // ⬇️ event klik biar muncul alert juga
       marker.on('click', () => {
         alert(`Anda mengklik ${sensor.name}\nStatus: ${this.getStatusText(sensor)}`);
       });

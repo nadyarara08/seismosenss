@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -23,7 +23,6 @@ export class ProfilePage implements OnInit {
     password: '123456', // dummy password
   };
 
-  
   profileData: any = {
     devices: 0,
     activeDays: 0,
@@ -36,16 +35,15 @@ export class ProfilePage implements OnInit {
   passwordForm: FormGroup;
 
   isLoading = false;
-  showToast = false;
-  toastMessage = '';
-  showAlert = false;
-  alertMessage = '';
-  alertButtons: any[] = ['OK'];
-
   showPassword = false;
   showConfirmPassword = false;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) {
     // Form edit profil
     this.editForm = this.fb.group({
       displayName: ['', [Validators.required, Validators.minLength(2)]],
@@ -89,18 +87,18 @@ export class ProfilePage implements OnInit {
   }
 
   // ----- Edit Profile -----
-  handleEditProfile() {
+  async handleEditProfile() {
     if (this.editForm.invalid) return;
     this.isLoading = true;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       this.isLoading = false;
       this.user.displayName = this.editForm.value.displayName;
 
       // Simpan ke localStorage
       localStorage.setItem('user', JSON.stringify(this.user));
 
-      this.showToastMessage('Profil berhasil diperbarui.');
+      await this.showToast('Profil berhasil diperbarui.');
       this.showSection('main');
     }, 1000);
   }
@@ -120,16 +118,16 @@ export class ProfilePage implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  handleChangePassword() {
+  async handleChangePassword() {
     if (this.passwordForm.invalid) return;
     this.isLoading = true;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       this.isLoading = false;
 
       // Cek password saat ini (mock check)
       if (this.passwordForm.value.currentPassword !== this.user.password) {
-        this.showAlertMessage('Password saat ini salah.');
+        await this.showAlert('Password saat ini salah.');
         return;
       }
 
@@ -137,43 +135,66 @@ export class ProfilePage implements OnInit {
       this.user.password = this.passwordForm.value.newPassword;
       localStorage.setItem('user', JSON.stringify(this.user));
 
-      this.showToastMessage('Password berhasil diubah.');
+      await this.showToast('Password berhasil diubah.');
       this.passwordForm.reset();
       this.showSection('main');
     }, 1000);
   }
 
   // ----- Support -----
-  handleSupportChat() {
-    this.showAlertMessage('Hubungi support di: support@seismosens.com');
+  async handleSupportChat() {
+    await this.showAlert('Hubungi support di: support@seismosens.com');
   }
 
-  handleAboutInfo() {
-    this.showAlertMessage('SeismoSens v2.1.0\nTim Pengembang 2025');
+  async handleAboutInfo() {
+    await this.showAlert('SeismoSens v2.1.0\nTim Pengembang 2025');
   }
 
   // ----- Logout -----
-  handleLogout() {
-    this.isLoading = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      localStorage.removeItem('user');
-      this.router.navigateByUrl('/dashboard/home', { replaceUrl: true });
-    }, 1000);
+  async handleLogout() {
+    const alert = await this.alertController.create({
+      header: 'Konfirmasi Logout',
+      message: 'Yakin ingin keluar dari akun?',
+      buttons: [
+        { text: 'Batal', role: 'cancel' },
+        {
+          text: 'Keluar',
+          handler: async () => {
+            this.isLoading = true;
+            setTimeout(async () => {
+              this.isLoading = false;
+              localStorage.removeItem('user');
+              await this.showToast('✅ Berhasil logout!');
+              this.router.navigateByUrl('/home', { replaceUrl: true });
+            }, 1000);
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   onScroll(event: any){
     console.log('scrolling...', event);
   }
 
-  // ----- Helper Toast & Alert -----
-  private showToastMessage(message: string) {
-    this.toastMessage = message;
-    this.showToast = true;
+  // ----- Helpers -----
+  private async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      position: 'bottom',
+      color: 'success'
+    });
+    await toast.present();
   }
 
-  private showAlertMessage(message: string) {
-    this.alertMessage = message;
-    this.showAlert = true;
+  private async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Info',
+      message,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 }
