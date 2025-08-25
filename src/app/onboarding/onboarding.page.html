@@ -1,5 +1,6 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="onboarding-container">
+    <!-- Header -->
     <div class="header">
       <ion-img src="assets/icon/logo.png" class="logo"></ion-img>
       <ion-text color="primary">
@@ -10,6 +11,7 @@
       </ion-text>
     </div>
 
+    <!-- Features -->
     <div class="features">
       <div class="feature-item">
         <div class="icon-container">
@@ -42,12 +44,17 @@
       </div>
     </div>
 
+    <!-- Buttons -->
     <div class="buttons">
       <ion-button expand="block" class="btn-primary" (click)="navigateTo('register')">
         Daftar Sekarang
       </ion-button>
       <ion-button expand="block" fill="clear" class="btn-secondary" (click)="navigateTo('login')">
         Masuk
+      </ion-button>
+      <!-- Optional skip -->
+      <ion-button expand="block" fill="outline" color="medium" (click)="skip()">
+        Lewati
       </ion-button>
     </div>
   </div>

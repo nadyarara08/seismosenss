@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicSlides } from '@ionic/angular';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { IonicModule, IonicSlides } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'app-onboarding',
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
+  imports: [IonicModule, CommonModule] // penting biar ion-content, ion-button dll dikenal
 })
-export class OnboardingPage implements OnInit {
-  // Use IonicSlides for the slides
+export class OnboardingPage {
+  // Gunakan IonicSlides untuk swiper
   swiperModules = [IonicSlides];
-  
-  // Optional: Configure slide options
+
+  // Opsi slides
   slideOpts = {
     initialSlide: 0,
     speed: 400,
@@ -40,14 +43,16 @@ export class OnboardingPage implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit() {}
-
+  // ✅ Perbaikan: routing sekarang ke /auth/login
   skip() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
+  }
+
+  navigateTo(page: string) {
+    this.router.navigate([`/auth/${page}`]);
   }
 
   onSlideChange(event: any) {
-    // Handle slide change if needed
     console.log('Slide changed', event);
   }
 }

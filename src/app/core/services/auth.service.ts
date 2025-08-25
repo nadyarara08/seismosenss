@@ -5,18 +5,18 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
-  sendPasswordResetEmail, 
-  updateProfile,
-  updateEmail,
-  updatePassword,
+  sendPasswordResetEmail as fbSendPasswordResetEmail, 
+  updateProfile as fbUpdateProfile,
+  updateEmail as fbUpdateEmail,
+  updatePassword as fbUpdatePassword,
   onAuthStateChanged,
   UserCredential,
   sendEmailVerification
 } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, from, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -108,7 +108,7 @@ export class AuthService {
       await this.updateUserData(userCredential.user.uid, userData);
       
       if (userCredential.user) {
-        await updateProfile(userCredential.user, { displayName });
+        await fbUpdateProfile(userCredential.user, { displayName });
       }
       
       return {
@@ -137,9 +137,9 @@ export class AuthService {
     }
   }
 
-  async sendPasswordResetEmail(email: string): Promise<void> {
+  async sendPasswordReset(email: string): Promise<void> {
     try {
-      await sendPasswordResetEmail(this.auth, email);
+      await fbSendPasswordResetEmail(this.auth, email);
     } catch (error) {
       console.error('Password reset error:', error);
       throw error;
@@ -151,7 +151,7 @@ export class AuthService {
     if (!user) throw new Error('No user is signed in');
 
     try {
-      await updateProfile(user, updates);
+      await fbUpdateProfile(user, updates);
       await this.updateUserData(user.uid, updates);
       this.userSubject.next({
         ...this.userSubject.value!,
@@ -168,7 +168,7 @@ export class AuthService {
     if (!user) throw new Error('No user is signed in');
 
     try {
-      await updateEmail(user, newEmail);
+      await fbUpdateEmail(user, newEmail);
       await this.updateUserData(user.uid, { email: newEmail });
       this.userSubject.next({
         ...this.userSubject.value!,
@@ -185,7 +185,7 @@ export class AuthService {
     if (!user) throw new Error('No user is signed in');
 
     try {
-      await updatePassword(user, newPassword);
+      await fbUpdatePassword(user, newPassword);
     } catch (error) {
       console.error('Password update error:', error);
       throw error;
@@ -212,8 +212,7 @@ export class AuthService {
   }
 
   async getAllUsers(): Promise<User[]> {
-    // Implementation depends on your Firestore security rules
-    // This is a placeholder implementation
+    // TODO: implement query ke Firestore
     return [];
   }
 

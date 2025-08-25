@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, IonicModule]
 })
-export class ForgotPasswordPage implements OnInit {
+export class ForgotPasswordPage {
   resetForm: FormGroup;
-  isSubmitted = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -19,50 +21,36 @@ export class ForgotPasswordPage implements OnInit {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private router: Router
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.resetForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]]
     });
   }
 
-  get email() {
-    return this.resetForm.get('email');
-  }
+  get email() { return this.resetForm.get('email'); }
 
   async onSubmit() {
-    this.isSubmitted = true;
-    
-    if (!this.resetForm.valid) {
-      return;
-    }
+    if (this.resetForm.invalid) return;
 
-    const loading = await this.loadingCtrl.create({
-      message: 'Sending reset email...'
-    });
+    const loading = await this.loadingCtrl.create({ message: 'Sending reset email...' });
     await loading.present();
 
     try {
-      await this.authService.sendPasswordResetEmail(this.resetForm.value.email);
-      
+      await this.authService.sendPasswordReset(this.resetForm.value.email);
+
       const alert = await this.alertCtrl.create({
         header: 'Check Your Email',
-        message: 'We have sent a password reset link to the email address you provided.',
+        message: 'We have sent a password reset link to your email address.',
         buttons: [{
           text: 'OK',
-          handler: () => {
-            this.router.navigate(['/auth/login']);
-          }
+          handler: () => this.router.navigate(['/auth/login'])
         }]
       });
-      
       await alert.present();
-    } catch (error) {
-      console.error('Password reset error:', error);
+    } catch (error: any) {
       const alert = await this.alertCtrl.create({
         header: 'Error',
-        message: error.message || 'Failed to send password reset email. Please try again.',
+        message: error?.message || 'Failed to send reset email. Please try again.',
         buttons: ['OK']
       });
       await alert.present();

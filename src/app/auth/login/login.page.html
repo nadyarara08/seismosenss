@@ -12,7 +12,8 @@
     <img src="assets/icon/logo.png" alt="Logo" class="logo">
   </div>
 
-  <form [formGroup]="credentials" (ngSubmit)="login()">
+  <!-- pakai loginForm + onSubmit -->
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <ion-item>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" formControlName="email" required></ion-input>
@@ -39,23 +40,20 @@
       <a routerLink="/auth/forgot-password">Lupa Password?</a>
     </div>
     
+    <!-- sesuaikan ke isLoading -->
     <ion-button 
       expand="block" 
       type="submit" 
       class="ion-margin-top" 
-      [disabled]="!credentials.valid"
-      [class.ion-hide]="loading">
-      Masuk
+      [disabled]="!loginForm.valid || isLoading">
+      <ng-container *ngIf="!isLoading; else loadingTpl">
+        Masuk
+      </ng-container>
     </ion-button>
 
-    <ion-button 
-      expand="block" 
-      color="medium" 
-      class="ion-margin-top" 
-      *ngIf="loading"
-      disabled>
+    <ng-template #loadingTpl>
       <ion-spinner name="crescent"></ion-spinner>
-    </ion-button>
+    </ng-template>
   </form>
   
   <div class="register-link">

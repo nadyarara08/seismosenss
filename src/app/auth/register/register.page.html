@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/login"></ion-back-button>
+      <ion-back-button defaultHref="/auth/login"></ion-back-button>
     </ion-buttons>
     <ion-title>Daftar</ion-title>
   </ion-toolbar>
@@ -12,28 +12,55 @@
     <img src="assets/icon/logo.png" alt="Logo" class="logo">
   </div>
 
-  <form [formGroup]="credentials" (ngSubmit)="register()">
+  <!-- pakai registerForm + onSubmit -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
     <ion-item>
       <ion-label position="floating">Nama Lengkap</ion-label>
       <ion-input type="text" formControlName="name" required></ion-input>
+      <ion-note *ngIf="registerForm.get('name')?.errors?.['required'] && (registerForm.get('name')?.dirty || registerForm.get('name')?.touched)" color="danger">
+        Nama harus diisi
+      </ion-note>
     </ion-item>
     
     <ion-item>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" formControlName="email" required></ion-input>
+      <ion-note *ngIf="registerForm.get('email')?.errors?.['required'] && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" color="danger">
+        Email harus diisi
+      </ion-note>
+      <ion-note *ngIf="registerForm.get('email')?.errors?.['email'] && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)" color="danger">
+        Format email tidak valid
+      </ion-note>
     </ion-item>
     
     <ion-item>
       <ion-label position="floating">Password</ion-label>
       <ion-input type="password" formControlName="password" required></ion-input>
+      <ion-note *ngIf="registerForm.get('password')?.errors?.['required'] && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)" color="danger">
+        Password harus diisi
+      </ion-note>
+      <ion-note *ngIf="registerForm.get('password')?.errors?.['minlength']" color="danger">
+        Password minimal 6 karakter
+      </ion-note>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Konfirmasi Password</ion-label>
+      <ion-input type="password" formControlName="confirmPassword" required></ion-input>
+      <ion-note *ngIf="registerForm.get('confirmPassword')?.errors?.['required'] && (registerForm.get('confirmPassword')?.dirty || registerForm.get('confirmPassword')?.touched)" color="danger">
+        Konfirmasi password harus diisi
+      </ion-note>
+      <ion-note *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']" color="danger">
+        Password tidak cocok
+      </ion-note>
     </ion-item>
     
-    <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="!credentials.valid">
+    <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="!registerForm.valid">
       Daftar
     </ion-button>
   </form>
   
   <div class="login-link">
-    Sudah punya akun? <a routerLink="/login">Masuk</a>
+    Sudah punya akun? <a routerLink="/auth/login">Masuk</a>
   </div>
 </ion-content>

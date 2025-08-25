@@ -7,15 +7,15 @@ import { ForgotPasswordPage } from './forgot-password/forgot-password.page';
 const routes: Routes = [
   {
     path: 'login',
-    component: LoginPage
+    loadComponent: () => import('./login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'register',
-    component: RegisterPage
+    loadComponent: () => import('./register/register.page').then(m => m.RegisterPage)
   },
   {
     path: 'forgot-password',
-    component: ForgotPasswordPage
+    loadComponent: () => import('./forgot-password/forgot-password.page').then(m => m.ForgotPasswordPage)
   },
   {
     path: '',
@@ -28,4 +28,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AuthRoutingModule { }
+export class AuthRoutingModule {}

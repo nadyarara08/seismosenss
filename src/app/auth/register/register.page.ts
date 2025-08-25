@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, IonicModule]
 })
-export class RegisterPage implements OnInit {
+export class RegisterPage {
   registerForm: FormGroup;
-  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -19,52 +21,31 @@ export class RegisterPage implements OnInit {
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.registerForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
-    }, { validator: this.matchingPasswords('password', 'confirmPassword') });
+    }, { validators: this.matchPasswords('password', 'confirmPassword') });
   }
 
-  private matchingPasswords(passwordKey: string, confirmPasswordKey: string) {
-    return (group: FormGroup) => {
-      const password = group.controls[passwordKey];
-      const confirmPassword = group.controls[confirmPasswordKey];
-
-      if (password.value !== confirmPassword.value) {
-        return confirmPassword.setErrors({ mismatchedPasswords: true });
+  private matchPasswords(password: string, confirmPassword: string) {
+    return (formGroup: FormGroup) => {
+      const pw = formGroup.get(password);
+      const cpw = formGroup.get(confirmPassword);
+      if (pw && cpw && pw.value !== cpw.value) {
+        cpw.setErrors({ mismatch: true });
+      } else {
+        cpw?.setErrors(null);
       }
     };
   }
 
-  get email() {
-    return this.registerForm.get('email');
-  }
-
-  get password() {
-    return this.registerForm.get('password');
-  }
-
-  get name() {
-    return this.registerForm.get('name');
-  }
-
-  get confirmPassword() {
-    return this.registerForm.get('confirmPassword');
-  }
-
   async onSubmit() {
-    if (!this.registerForm.valid) {
-      return;
-    }
+    if (this.registerForm.invalid) return;
 
-    const loading = await this.loadingCtrl.create({
-      message: 'Creating account...'
-    });
+    const loading = await this.loadingCtrl.create({ message: 'Creating account...' });
     await loading.present();
 
     try {
@@ -73,24 +54,20 @@ export class RegisterPage implements OnInit {
         this.registerForm.value.password,
         this.registerForm.value.name
       );
-      
+
       const alert = await this.alertCtrl.create({
         header: 'Registration Successful',
         message: 'Please check your email to verify your account.',
         buttons: [{
           text: 'OK',
-          handler: () => {
-            this.router.navigate(['/auth/login']);
-          }
+          handler: () => this.router.navigate(['/auth/login'])
         }]
       });
-      
       await alert.present();
-    } catch (error) {
-      console.error('Registration error:', error);
+    } catch (error: any) {
       const alert = await this.alertCtrl.create({
         header: 'Registration Failed',
-        message: error.message || 'Could not register. Please try again.',
+        message: error?.message || 'Could not register. Please try again.',
         buttons: ['OK']
       });
       await alert.present();
