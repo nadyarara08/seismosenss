@@ -8,13 +8,11 @@ import { CommonModule } from '@angular/common';
   selector: 'app-onboarding',
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
-  imports: [IonicModule, CommonModule] // penting biar ion-content, ion-button dll dikenal
+  imports: [IonicModule, CommonModule]
 })
 export class OnboardingPage {
-  // Gunakan IonicSlides untuk swiper
   swiperModules = [IonicSlides];
 
-  // Opsi slides
   slideOpts = {
     initialSlide: 0,
     speed: 400,
@@ -43,7 +41,6 @@ export class OnboardingPage {
 
   constructor(private router: Router) {}
 
-  // ✅ Perbaikan: routing sekarang ke /auth/login
   skip() {
     this.router.navigate(['/auth/login']);
   }

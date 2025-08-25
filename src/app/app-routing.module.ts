@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'onboarding',
-    loadChildren: () => import('./onboarding/onboarding.module').then(m => m.OnboardingPageModule),
+    loadComponent: () => import('./onboarding/onboarding.page').then(m => m.OnboardingPage),
     canActivate: [NoAuthGuard]
   },
   {
@@ -21,16 +21,14 @@ const routes: Routes = [
     canActivate: [NoAuthGuard]
   },
   {
-    path: 'dashboard',
+    path: 'app',
     loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
-    canActivate: [AuthGuard],
-    canLoad: [AuthGuard]
+    canActivate: [AuthGuard]
   },
   {
-    path: '**',
-    redirectTo: 'onboarding',
-    pathMatch: 'full'
-  }
+    path: '',
+    redirectTo: 'onboarding'
+  }
 ];
 
 @NgModule({
@@ -38,8 +36,6 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { 
       preloadingStrategy: PreloadAllModules,
       scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      onSameUrlNavigation: 'reload'
     })
   ],
   exports: [RouterModule]

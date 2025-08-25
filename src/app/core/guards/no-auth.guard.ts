@@ -19,8 +19,8 @@ export class NoAuthGuard implements CanActivate {
         if (!user) {
           return true;
         }
-        // If user is logged in, redirect to dashboard
-        this.router.navigate(['/dashboard']);
+        // If user is logged in, redirect to app
+        this.router.navigate(['/app']);
         return false;
       })
     );

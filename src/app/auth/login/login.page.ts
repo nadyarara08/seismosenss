@@ -40,7 +40,7 @@ export class LoginPage {
 
     try {
       await this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
-      this.router.navigateByUrl('/dashboard');
+      this.router.navigateByUrl('/app');
     } catch (error: any) {
       const alert = await this.alertCtrl.create({
         header: 'Login Failed',

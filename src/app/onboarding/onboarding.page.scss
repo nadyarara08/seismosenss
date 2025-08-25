@@ -5,6 +5,11 @@ ion-content {
     --padding-top: 40px;
     --padding-bottom: 40px;
   }
+
+  // Hide bottom tab bar on onboarding page
+  ion-tab-bar {
+    display: none !important;
+  }
   
   .onboarding-container {
     height: 100%;
